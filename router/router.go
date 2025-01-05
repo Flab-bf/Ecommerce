@@ -4,5 +4,6 @@ import "github.com/cloudwego/hertz/pkg/app/server"
 
 func NewRouter() *server.Hertz {
 	h := server.New()
+	h.GET("/")
 	return h
 }
