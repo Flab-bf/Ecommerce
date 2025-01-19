@@ -1,7 +1,6 @@
 package utils
 
-func DisConnectDB(err error) {
-	if err != nil {
-
-	}
+var SuccessRegist = map[string]interface{}{
+	"status": 10000,
+	"info":   "成功",
 }
