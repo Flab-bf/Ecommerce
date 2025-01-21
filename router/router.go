@@ -11,7 +11,7 @@ func NewRouter() *server.Hertz {
 	//用户注册
 	user.POST("/register", api.UserRegister)
 	//登录
-	user.GET("/token")
+	user.GET("/token", api.UserLogin)
 	//刷新token
 	user.GET("/token/refresh")
 	//修改密码
