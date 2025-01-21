@@ -22,12 +22,43 @@ func RegisterUser(req *model.UserMassage) error {
 
 func LoginUser(req *model.UserMassage) int {
 	is := dao.IsAccountAndPassword(req.Password, req.Account)
-	if is == -1 {
+	if is != 1 {
 		return is
 	}
-	if is == 0 {
-		return is
+	var err error
+	req.Uid, err = dao.FindUidFromAccount(req.Account)
+	if err != nil {
+
 	}
-	dao.PostTokenJwt(int64(req.Uid))
+	dao.PostTokenJwt(req.Uid)
 	return 1
+}
+
+func ChangePassword(req *model.UserChangePassword) error {
+	is := dao.IsAccountAndPassword(req.Password, req.Account)
+	if is == 0 {
+		//daiding******************************
+		//**********************************
+	}
+	err := dao.UpdatePassword(req)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetUserInfo(account int) (model.UserMassage, error) {
+	info, err := dao.GetUserInfo(account)
+	if err != nil {
+		return info, err
+	}
+	return info, nil
+}
+
+func ChangeUserInfo(req *model.UserMassage) error {
+	err := dao.PutUserInfo(req)
+	if err != nil {
+		return err
+	}
+	return nil
 }

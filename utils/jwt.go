@@ -7,13 +7,13 @@ import (
 )
 
 type MyClaims struct {
-	Uid int64 `json:"uid"`
+	Uid int `json:"uid"`
 	jwt.MapClaims
 }
 
 var MySecretKey = []byte("acm=ave_mujica+crychic+mygo")
 
-func SetTokenJwt(uid int64, duration time.Duration) (string, error) {
+func SetTokenJwt(uid int, duration time.Duration) (string, error) {
 	Claim := MyClaims{
 		Uid: uid,
 		MapClaims: jwt.MapClaims{
@@ -41,6 +41,6 @@ func ParseToken(t string) (*MyClaims, error) {
 	return nil, errors.New("invalid token")
 }
 
-func RefreshToken(uid int64) (string, error) {
-	return SetTokenJwt(uid,time.Hour*24)
+func RefreshToken(uid int) (string, error) {
+	return SetTokenJwt(uid, time.Hour*24)
 }
