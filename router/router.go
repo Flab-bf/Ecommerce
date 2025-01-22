@@ -3,11 +3,12 @@ package router
 import (
 	"ecommerce/api"
 	"ecommerce/middleWares"
+	"ecommerce/utils"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func NewRouter() *server.Hertz {
-	h := server.New()
+	h := server.Default(server.WithTLS(utils.ConnectHttps()), server.WithHostPorts(":8080"))
 	user := h.Group("/user")
 	//用户注册
 	user.POST("/register", api.UserRegister)
