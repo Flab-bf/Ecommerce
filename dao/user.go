@@ -81,7 +81,7 @@ func FindUidFromAccount(account int) (int, error) {
 	return uid, nil
 }
 
-func PostTokenJwt(uid int) {
+func PostTokenJwt(uid int) string {
 	var userToken = model.UserToken{
 		Uid: uid,
 	}
@@ -93,15 +93,16 @@ func PostTokenJwt(uid int) {
 		result := DB.Create(&userToken)
 		if result.Error != nil {
 		}
-		return
+		return ""
 	}
 	result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Update("token", token)
 	if result.Error != nil {
-
+		return ""
 	}
+	return token
 }
 
-func PutTokenJwt(uid int) {
+func PutTokenJwt(uid int) string {
 	var userToken = model.UserToken{
 		Uid: uid,
 	}
@@ -113,10 +114,23 @@ func PutTokenJwt(uid int) {
 		result := DB.Create(&userToken)
 		if result.Error != nil {
 		}
-		return
+		return ""
 	}
 	result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Update("token", token)
 	if result.Error != nil {
 
 	}
+	return token
+}
+
+func IsLegalUser(uid int) (bool, error) {
+	var count int64
+	result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Count(&count)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	if count != 1 {
+		return false, nil
+	}
+	return true, nil
 }

@@ -31,12 +31,12 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 		c.JSON(100, "witing")
 		return
 	}
-	is := service.LoginUser(&req)
+	is, t := service.LoginUser(&req)
 	if is != 1 {
 		c.JSON(100, "witing")
 		return
 	}
-	c.JSON(200, "ok")
+	c.JSON(200, t)
 }
 
 func RefreshToken(ctx context.Context, c *app.RequestContext) {
@@ -51,7 +51,8 @@ func RefreshToken(ctx context.Context, c *app.RequestContext) {
 		c.JSON(100, "witing")
 		return
 	}
-	dao.PutTokenJwt(id)
+	t := dao.PutTokenJwt(id)
+	c.JSON(200, t)
 }
 
 func UpdatePassword(ctx context.Context, c *app.RequestContext) {

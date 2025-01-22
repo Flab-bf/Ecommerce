@@ -2,6 +2,7 @@ package router
 
 import (
 	"ecommerce/api"
+	"ecommerce/middleWares"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -11,15 +12,15 @@ func NewRouter() *server.Hertz {
 	//用户注册
 	user.POST("/register", api.UserRegister)
 	//登录
-	user.GET("/token", api.UserLogin)
+	user.POST("/token", api.UserLogin)
 	//刷新token
-	user.GET("/token/refresh", api.RefreshToken)
+	user.GET("/token/refresh", middleWares.JwtAuthMiddleware(), api.RefreshToken)
 	//修改密码
-	user.PUT("/password", api.UpdatePassword)
-	//获取用户信息
-	user.GET("/info/:user_id", api.GetUserInfo)
+	user.PUT("/password", middleWares.JwtAuthMiddleware(), api.UpdatePassword)
+	//获取用户信
+	user.GET("/info/:user_id", middleWares.JwtAuthMiddleware(), api.GetUserInfo)
 	//修改用户信息
-	user.PUT("/info", api.ChangeUserInfo)
+	user.PUT("/info", middleWares.JwtAuthMiddleware(), api.ChangeUserInfo)
 
 	//product := h.Group("/product")
 	////获取商品列表

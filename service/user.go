@@ -20,18 +20,18 @@ func RegisterUser(req *model.UserMassage) error {
 	return nil
 }
 
-func LoginUser(req *model.UserMassage) int {
+func LoginUser(req *model.UserMassage) (int, string) {
 	is := dao.IsAccountAndPassword(req.Password, req.Account)
 	if is != 1 {
-		return is
+		return is, ""
 	}
 	var err error
 	req.Uid, err = dao.FindUidFromAccount(req.Account)
 	if err != nil {
 
 	}
-	dao.PostTokenJwt(req.Uid)
-	return 1
+	token := dao.PostTokenJwt(req.Uid)
+	return 1, token
 }
 
 func ChangePassword(req *model.UserChangePassword) error {
