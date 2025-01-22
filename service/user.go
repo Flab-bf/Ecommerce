@@ -7,11 +7,8 @@ import (
 
 func RegisterUser(req *model.UserMassage) error {
 	is, err := dao.IsRepeatUser(req)
-	if err != nil {
+	if err != nil || is {
 		return err //账号重复
-	}
-	if is {
-		return err
 	}
 	err = dao.CreateUser(req)
 	if err != nil {
@@ -20,27 +17,25 @@ func RegisterUser(req *model.UserMassage) error {
 	return nil
 }
 
-func LoginUser(req *model.UserMassage) (int, string) {
-	is := dao.IsAccountAndPassword(req.Password, req.Account)
-	if is != 1 {
-		return is, ""
+func LoginUser(req *model.UserMassage) (error, string) {
+	err := dao.IsAccountAndPassword(req.Password, req.Account)
+	if err != nil {
+		return err, ""
 	}
-	var err error
 	req.Uid, err = dao.FindUidFromAccount(req.Account)
 	if err != nil {
-
+		return err, ""
 	}
 	token := dao.PostTokenJwt(req.Uid)
-	return 1, token
+	return nil, token
 }
 
 func ChangePassword(req *model.UserChangePassword) error {
-	is := dao.IsAccountAndPassword(req.Password, req.Account)
-	if is == 0 {
-		//daiding******************************
-		//**********************************
+	err := dao.IsAccountAndPassword(req.Password, req.Account)
+	if err != nil {
+		return err
 	}
-	err := dao.UpdatePassword(req)
+	err = dao.UpdatePassword(req)
 	if err != nil {
 		return err
 	}

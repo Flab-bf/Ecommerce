@@ -17,7 +17,7 @@ func NewRouter() *server.Hertz {
 	user.GET("/token/refresh", middleWares.JwtAuthMiddleware(), api.RefreshToken)
 	//修改密码
 	user.PUT("/password", middleWares.JwtAuthMiddleware(), api.UpdatePassword)
-	//获取用户信
+	//获取用户信息
 	user.GET("/info/:user_id", middleWares.JwtAuthMiddleware(), api.GetUserInfo)
 	//修改用户信息
 	user.PUT("/info", middleWares.JwtAuthMiddleware(), api.ChangeUserInfo)

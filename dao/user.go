@@ -3,6 +3,7 @@ package dao
 import (
 	"ecommerce/model"
 	"ecommerce/utils"
+	"errors"
 	"time"
 )
 
@@ -22,26 +23,26 @@ func IsRepeatUser(req *model.UserMassage) (bool, error) {
 	return count > 0, nil
 }
 
-func IsAccountAndPassword(password string, account int) int {
+func IsAccountAndPassword(password string, account int) error {
 	var selectPassword model.UserMassage
 	var inputAccount model.UserMassage
 	isAccount := DB.Model(&model.UserMassage{}).Select("account").
 		Where("account=?", account).First(&inputAccount)
 	if isAccount.Error != nil {
-		return -3 //账号不存在
+		return isAccount.Error //账号不存在
 	}
 	if inputAccount.Account != account {
-		return -2
+		return errors.New("账号不存在")
 	}
 	result := DB.Model(&model.UserMassage{}).Select("password").
 		Where("account=?", account).First(&selectPassword)
 	if result.Error != nil {
-		return -1 //查询失败
+		return result.Error //查询失败
 	}
 	if selectPassword.Password != password {
-		return 0 //密码错误
+		return result.Error //密码错误
 	}
-	return 1
+	return nil
 }
 
 func UpdatePassword(req *model.UserChangePassword) error {
