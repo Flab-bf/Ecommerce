@@ -6,7 +6,7 @@ type UserMassage struct {
 	Uid          int       `gorm:"primaryKey;autoIncrement" json:"uid"`
 	Account      int       `gorm:"not null;unique" json:"account" query:"account"`
 	Password     string    `gorm:"type:varchar(225);not null" json:"password" query:"password"`
-	NickName     string    `gorm:"not null" json:"nick_name"`
+	NickName     string    `gorm:"not null" json:"nickName"`
 	CreatedAt    time.Time `gorm:"type:timestamp;comment:创建时间"`
 	UpPassword   time.Time `gorm:"type:timestamp"`
 	Gender       int       `gorm:"type:int" json:"gender"`

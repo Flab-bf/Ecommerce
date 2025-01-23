@@ -23,18 +23,21 @@ func NewRouter() *server.Hertz {
 	//修改用户信息
 	user.PUT("/info", middleWares.JwtAuthMiddleware(), api.ChangeUserInfo)
 
-	//product := h.Group("/product")
-	////获取商品列表
-	//product.GET("/list")
-	////加入购物车
-	//product.PUT("/addCart")
-	////获取购物车列表
-	//product.GET("/crat")
-	////获取商品详情
-	//product.GET("/info/:product_id")
-	////获取相应标签的商品列表
-	//product.GET("/:type")
-	//
+	product := h.Group("/product")
+	product.Use(middleWares.JwtAuthMiddleware())
+	//获取商品列表
+	product.GET("/list", api.GetProductList)
+	//搜索商品
+	product.GET("/search")
+	//加入购物车
+	product.PUT("/addCart", api.AddCart)
+	//获取购物车列表
+	product.GET("/crat", api.CartInfo)
+	//获取商品详情
+	product.GET("/info/:product_id")
+	//获取相应标签的商品列表
+	product.GET("/:type")
+
 	//comment := h.Group("/comment")
 	////获取评论
 	//comment.GET("/:product_id")
@@ -49,9 +52,6 @@ func NewRouter() *server.Hertz {
 	//
 	////下单
 	//h.POST("/operate/order")
-	//
-	////搜索商品
-	//h.GET("/:name/search")
 
 	return h
 }

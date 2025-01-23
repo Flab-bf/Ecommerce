@@ -31,6 +31,7 @@ func JwtAuthMiddleware() app.HandlerFunc {
 			ctx.Abort()
 			return
 		}
+		ctx.Set("uid", myClaims.Uid)
 		ctx.Next(c)
 	}
 }
