@@ -32,31 +32,32 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 		c.JSON(400, utils.ErrorResponse(10001, "参数错误"))
 		return
 	}
-	err, t := service.LoginUser(&req)
+	err, t, rt := service.LoginUser(&req)
 	if err != nil {
 		c.JSON(401, utils.ErrorResponse(20003, "用户名或密码错误"))
 		return
 	}
 	c.JSON(200, utils.SuccessResponse(map[string]interface{}{
-		"token": t,
+		"refreshToken": rt,
+		"token":        t,
 	}))
 }
 
 func RefreshToken(ctx context.Context, c *app.RequestContext) {
-	var req model.UserMassage
-	err := c.Bind(&req)
+	refreshToken := c.Query("refresh_token")
+	myClaims, err := utils.ParseRefreshToken(refreshToken)
 	if err != nil {
-		c.JSON(400, utils.ErrorResponse(10001, "参数错误"))
+		c.JSON(500, utils.ErrorResponse(10002, "解析错误"))
 		return
 	}
-	id, err := dao.FindUidFromAccount(req.Account)
-	if err != nil {
-		c.JSON(404, utils.ErrorResponse(20002, "未能找到用户信息"))
+	t := dao.PutTokenJwt(myClaims.Uid)
+	if t == "" {
+		c.JSON(401, utils.ErrorResponse(20003, "登录过期"))
 		return
 	}
-	t := dao.PutTokenJwt(id)
 	c.JSON(200, utils.SuccessResponse(map[string]interface{}{
-		"refresh_token": t,
+		"refresh_token": refreshToken,
+		"token":         t,
 	}))
 }
 

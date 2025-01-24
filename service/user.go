@@ -17,17 +17,17 @@ func RegisterUser(req *model.UserMassage) error {
 	return nil
 }
 
-func LoginUser(req *model.UserMassage) (error, string) {
+func LoginUser(req *model.UserMassage) (error, string, string) {
 	err := dao.IsAccountAndPassword(req.Password, req.Account)
 	if err != nil {
-		return err, ""
+		return err, "", ""
 	}
 	req.Uid, err = dao.FindUidFromAccount(req.Account)
 	if err != nil {
-		return err, ""
+		return err, "", ""
 	}
-	token := dao.PostTokenJwt(req.Uid)
-	return nil, token
+	token, refreshToken := dao.PostTokenJwt(req.Uid)
+	return nil, token, refreshToken
 }
 
 func ChangePassword(req *model.UserChangePassword) error {

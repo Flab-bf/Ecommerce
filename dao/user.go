@@ -82,44 +82,39 @@ func FindUidFromAccount(account int) (int, error) {
 	return uid, nil
 }
 
-func PostTokenJwt(uid int) string {
+func PostTokenJwt(uid int) (string, string) {
 	var userToken = model.UserToken{
 		Uid: uid,
 	}
-	token, _ := utils.SetTokenJwt(uid, time.Minute*30)
+	token, _ := utils.SetAccessToken(uid)
+	refreshToken, _ := utils.SetRefreshToken(uid)
 	userToken.Token = token
+	userToken.RefreshToken = refreshToken
 	var count int64
 	DB.Model(&model.UserToken{}).Where("uid=?", uid).Count(&count)
 	if count == 0 {
 		result := DB.Create(&userToken)
 		if result.Error != nil {
+			return "", ""
 		}
-		return ""
+		return "", ""
 	}
-	result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Update("token", token)
+	result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Updates(&token)
 	if result.Error != nil {
-		return ""
+		return "", ""
 	}
-	return token
+	return token, refreshToken
 }
 
 func PutTokenJwt(uid int) string {
 	var userToken = model.UserToken{
 		Uid: uid,
 	}
-	token, _ := utils.RefreshToken(uid)
+	token, _ := utils.SetAccessToken(uid)
 	userToken.Token = token
-	var count int64
-	DB.Model(&model.UserToken{}).Where("uid=?", uid).Count(&count)
-	if count == 0 {
-		result := DB.Create(&userToken)
-		if result.Error != nil {
-		}
-		return ""
-	}
 	result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Update("token", token)
 	if result.Error != nil {
-
+		return ""
 	}
 	return token
 }

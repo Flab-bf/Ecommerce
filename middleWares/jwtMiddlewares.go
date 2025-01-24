@@ -19,7 +19,7 @@ func JwtAuthMiddleware() app.HandlerFunc {
 		if strings.HasPrefix(authHeader, "Bearer ") {
 			authHeader = strings.TrimPrefix(authHeader, "Bearer ")
 		}
-		myClaims, err := utils.ParseToken(authHeader)
+		myClaims, err := utils.ParseAccessToken(authHeader)
 		if err != nil {
 			ctx.JSON(404, "token 解析错误")
 			ctx.Abort()

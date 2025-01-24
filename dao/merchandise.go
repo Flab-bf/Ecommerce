@@ -14,7 +14,7 @@ func GetProductList() ([]model.Product, error) {
 	return List, nil
 }
 
-func FindProduct(id int) (error, model.Cart) {
+func FindProductToCart(id int) (error, model.Cart) {
 	var cart model.Cart
 	result := DB.Model(&model.Product{}).Where("product_id=?", id).First(&cart)
 	if result.Error != nil {
@@ -47,4 +47,40 @@ func GetCarts(uid int) ([]model.Cart, error) {
 		return nil, result.Error
 	}
 	return info, nil
+}
+
+func GetProductFromId(pid int) (model.Product, error) {
+	var info model.Product
+	result := DB.Model(&model.Product{}).Where("product_id=?", pid).Find(&info)
+	if result.Error != nil {
+		return model.Product{}, result.Error
+	}
+	return info, nil
+}
+
+func GetProductFromType(ty string) (model.Product, error) {
+	var info model.Product
+	result := DB.Model(&model.Product{}).Where("type=?", ty).Find(&info)
+	if result.Error != nil {
+		return model.Product{}, result.Error
+	}
+	return info, nil
+}
+
+func GetProductFromName(name string) (model.Product, error) {
+	var info model.Product
+	result := DB.Model(&model.Product{}).Where("name=?", name).Find(&info)
+	if result.Error != nil {
+		return model.Product{}, result.Error
+	}
+	return info, nil
+}
+
+func InCart(pid int, uid int) bool {
+	var in int64
+	DB.Model(&model.Cart{}).Where("product_id=? AND user_id=?", pid, uid).Count(&in)
+	if in == 0 {
+		return false
+	}
+	return true
 }

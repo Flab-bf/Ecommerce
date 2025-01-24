@@ -10,7 +10,7 @@ func ProductList() ([]model.Product, error) {
 }
 
 func AddCart(id int, userId int) error {
-	err, cart := dao.FindProduct(id)
+	err, cart := dao.FindProductToCart(id)
 	if err != nil {
 		return err
 	}
@@ -28,4 +28,37 @@ func GetCarts(uid int) ([]model.Cart, error) {
 		return nil, err
 	}
 	return info, nil
+}
+
+func SearchInfoFromId(id int) (model.Product, error) {
+	info, err := dao.GetProductFromId(id)
+	if err != nil {
+		return model.Product{}, err
+	}
+	return info, nil
+}
+
+func GetProductFromType(ty string) (model.Product, error) {
+	info, err := dao.GetProductFromType(ty)
+	if err != nil {
+		return model.Product{}, err
+	}
+	return info, nil
+}
+
+func GetProductFromName(name string) (model.Product, error) {
+	info, err := dao.GetProductFromName(name)
+	if err != nil {
+		return model.Product{}, err
+	}
+	return info, nil
+}
+
+func Incart(uid int, info model.Product) {
+	in := dao.InCart(info.ProductId, uid)
+	if in {
+		info.IsAddedCart = true
+	} else {
+		info.IsAddedCart = false
+	}
 }

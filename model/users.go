@@ -24,6 +24,7 @@ type UserChangePassword struct {
 	NewPassword string `json:"new_password"`
 }
 type UserToken struct {
-	Uid   int    `gorm:"primaryKey" json:"uid"`
-	Token string `gorm:"type:varchar(512)" json:"token"`
+	Uid          int    `gorm:"primaryKey" json:"uid"`
+	Token        string `gorm:"type:varchar(512)" json:"token"`
+	RefreshToken string `gorm:"type:varchar(512)" json:"refreshToken"`
 }

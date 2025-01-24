@@ -5,6 +5,7 @@ import (
 	"ecommerce/service"
 	"ecommerce/utils"
 	"github.com/cloudwego/hertz/pkg/app"
+	"strconv"
 )
 
 func GetProductList(ctx context.Context, c *app.RequestContext) {
@@ -58,4 +59,62 @@ func CartInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	c.JSON(200, utils.SuccessResponse(date))
+}
+
+func GetInfoFromId(ctx context.Context, c *app.RequestContext) {
+	pid := c.Param("product_id")
+	id, err := strconv.Atoi(pid)
+	if err != nil {
+		c.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
+		return
+	}
+	info, err := service.SearchInfoFromId(id)
+	if err != nil {
+		c.JSON(404, utils.ErrorResponse(30003, "未知商品"))
+		return
+	}
+	uid, _ := c.Get("uid")
+	userId, ok := uid.(int)
+	if !ok {
+		c.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
+	}
+	service.Incart(userId, info)
+	c.JSON(200, utils.SuccessResponse(info))
+}
+
+func GetInfoFromType(ctx context.Context, c *app.RequestContext) {
+	ptype := c.Param("type")
+	info, err := service.GetProductFromType(ptype)
+	if err != nil {
+		c.JSON(404, utils.ErrorResponse(30003, "未知商品"))
+		return
+	}
+	uid, _ := c.Get("uid")
+	userId, ok := uid.(int)
+	if !ok {
+		c.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
+	}
+	service.Incart(userId, info)
+	c.JSON(200, utils.SuccessResponse(info))
+}
+
+func SearchProduct(c context.Context, ctx *app.RequestContext) {
+	pname := ctx.Query("name")
+	info, err := service.GetProductFromName(pname)
+	if err != nil {
+		ctx.JSON(404, utils.ErrorResponse(30003, "Not Found"))
+		return
+	}
+	uid, is := ctx.Get("uid")
+	if !is {
+		info.IsAddedCart = false
+	} else {
+		userId, ok := uid.(int)
+		if !ok {
+			ctx.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
+			return
+		}
+		service.Incart(userId, info)
+	}
+	ctx.JSON(200, utils.SuccessResponse(info))
 }
