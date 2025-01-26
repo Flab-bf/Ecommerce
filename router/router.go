@@ -42,18 +42,18 @@ func NewRouter() *server.Hertz {
 	comment := h.Group("/comment")
 	comment.Use(middleWares.JwtAuthMiddleware())
 	//获取评论
-	comment.GET("/:product_id")
+	comment.GET("/:product_id", api.GetComment)
 	//评论
-	comment.POST("/:product_id")
+	comment.POST("/:product_id", api.Comment)
 	//删除评论
-	comment.DELETE("/:comment_id")
+	comment.DELETE("/:comment_id", api.DeleteComment)
 	//更新评论
-	comment.PUT("/:comment_id")
+	comment.PUT("/:comment_id", api.UpdateComment)
 	//点踩评论
-	comment.POST("/praise")
+	comment.POST("/praise", api.PraiseOrNot)
 
-	////下单
-	//h.POST("/operate/order")
+	//下单
+	h.POST("/operate/order", middleWares.JwtAuthMiddleware(), api.GetOrder)
 
 	return h
 }

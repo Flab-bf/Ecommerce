@@ -78,7 +78,7 @@ func GetInfoFromId(ctx context.Context, c *app.RequestContext) {
 	if !ok {
 		c.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
 	}
-	service.Incart(userId, info)
+	service.InCart(userId, &info)
 	c.JSON(200, utils.SuccessResponse(info))
 }
 
@@ -94,7 +94,7 @@ func GetInfoFromType(ctx context.Context, c *app.RequestContext) {
 	if !ok {
 		c.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
 	}
-	service.Incart(userId, info)
+	service.InCart(userId, &info)
 	c.JSON(200, utils.SuccessResponse(info))
 }
 
@@ -114,7 +114,11 @@ func SearchProduct(c context.Context, ctx *app.RequestContext) {
 			ctx.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
 			return
 		}
-		service.Incart(userId, info)
+		service.InCart(userId, &info)
 	}
 	ctx.JSON(200, utils.SuccessResponse(info))
+}
+
+func GetOrder(c context.Context, ctx *app.RequestContext) {
+
 }

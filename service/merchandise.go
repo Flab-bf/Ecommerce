@@ -54,7 +54,7 @@ func GetProductFromName(name string) (model.Product, error) {
 	return info, nil
 }
 
-func Incart(uid int, info model.Product) {
+func InCart(uid int, info *model.Product) {
 	in := dao.InCart(info.ProductId, uid)
 	if in {
 		info.IsAddedCart = true
