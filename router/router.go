@@ -45,10 +45,13 @@ func NewRouter() *server.Hertz {
 	comment.GET("/:product_id", api.GetComment)
 	//评论
 	comment.POST("/:product_id", api.Comment)
+	//回复
+	comment.POST("/:parent_id", api.Reply)
 	//删除评论
 	comment.DELETE("/:comment_id", api.DeleteComment)
 	//更新评论
 	comment.PUT("/:comment_id", api.UpdateComment)
+
 	//点踩评论
 	comment.POST("/praise", api.PraiseOrNot)
 
