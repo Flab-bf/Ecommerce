@@ -32,14 +32,37 @@ func Comment(cmt *model.Comment, ctx *app.RequestContext) (int64, error) {
 	cmt.PraiseCount = 0
 	now := time.Now()
 	cmt.PublishTime = now.Format("2006-01-02 15:04:05")
+	cmt, err := dao.CommentGetUmsg(cmt)
+	if err != nil {
+		return 0, err
+	}
 	id, err := dao.Comment(cmt)
 	if err != nil {
 		return 0, err
 	}
 	return id, nil
 }
-
+func Reply(cmt *model.Comment, ctx *app.RequestContext) (int64, error) {
+	uid, _ := ctx.Get("uid")
+	uidInt := uid.(int)
+	cmt.UserId = uidInt
+	cmt.PraiseCount = 0
+	cmt.PublishTime = time.Now().Format("2006-01-02 15:04:05")
+	cmt, err := dao.CommentGetUmsg(cmt)
+	if err != nil {
+		return 0, err
+	}
+	id, err := dao.Reply(cmt)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
 func DeleteComment(cid int) error {
+	return dao.Delete(cid)
+}
 
-	return nil
+func UpdateComment(cmt *model.Comment) error {
+	cmt.PublishTime = time.Now().Format("2006-01-02 15:04:05")
+	return dao.Update(cmt)
 }

@@ -42,19 +42,46 @@ func GetReply(info *[]model.Comment) (*[]model.Comment, error) {
 	return info, nil
 }
 
-func Comment(cmt *model.Comment) (int64, error) {
-
+func CommentGetUmsg(cmt *model.Comment) (*model.Comment, error) {
 	result := DB.Model(&model.UserMassage{}).Select("nick_name").Where("uid=?", cmt.UserId).First(&cmt.NickName)
 	if result.Error != nil {
-		return 0, result.Error
+		return nil, result.Error
 	}
 	result = DB.Model(model.UserMassage{}).Select("avatar").Where("uid=?", cmt.UserId).First(&cmt.Avatar)
 	if result.Error != nil {
-		return 0, result.Error
+		return nil, result.Error
 	}
-	result = DB.Model(&model.Comment{}).Create(cmt)
+	return cmt, nil
+}
+func Comment(cmt *model.Comment) (int64, error) {
+
+	result := DB.Model(&model.Comment{}).Create(cmt)
 	if result.Error != nil {
 		return 0, result.Error
 	}
 	return cmt.PostId, nil
+}
+
+func Reply(cmt *model.Comment) (int64, error) {
+	result := DB.Model(&model.Comment{}).Create(cmt)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return cmt.PostId, nil
+}
+
+func Delete(cid int) error {
+	result := DB.Model(&model.Comment{}).Where("post_id=?", cid).Delete(&model.Comment{})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func Update(cmt *model.Comment) error {
+	result := DB.Model(&model.Comment{}).Where("post_id=?", cmt.PostId).Updates(cmt)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

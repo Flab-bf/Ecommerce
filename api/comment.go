@@ -11,6 +11,7 @@ import (
 
 func Comment(c context.Context, ctx *app.RequestContext) {
 	var cmt model.Comment
+	var id int64
 	err := ctx.Bind(&cmt)
 	if err != nil {
 		ctx.JSON(400, utils.ErrorResponse(10002, "参数错误"))
@@ -20,16 +21,16 @@ func Comment(c context.Context, ctx *app.RequestContext) {
 		ctx.JSON(403, utils.ErrorResponse(40001, "字数超限"))
 		return
 	}
-	id, err := service.Comment(&cmt, ctx)
+	if cmt.ParentId == 0 {
+		id, err = service.Comment(&cmt, ctx)
+	} else {
+		id, err = service.Reply(&cmt, ctx)
+	}
 	if err != nil || id == 0 {
 		ctx.JSON(403, utils.ErrorResponse(40001, "评论失败"))
 		return
 	}
 	ctx.JSON(200, utils.SuccessResponse(id))
-}
-
-func Reply(c context.Context, ctx *app.RequestContext) {
-
 }
 
 func GetComment(c context.Context, ctx *app.RequestContext) {
@@ -56,14 +57,25 @@ func DeleteComment(c context.Context, ctx *app.RequestContext) {
 	}
 	err = service.DeleteComment(cidInt)
 	if err != nil {
-		ctx.JSON(40004, "删除失败")
+		ctx.JSON(400, utils.ErrorResponse(40003, "删除失败"))
 		return
 	}
 	ctx.JSON(200, utils.SuccessResponse(10000))
 }
 
 func UpdateComment(c context.Context, ctx *app.RequestContext) {
-
+	var cmt model.Comment
+	err := ctx.Bind(&cmt)
+	if err != nil {
+		ctx.JSON(500, utils.ErrorResponse(10002, "意外错误"))
+		return
+	}
+	err = service.UpdateComment(&cmt)
+	if err != nil {
+		ctx.JSON(400, utils.ErrorResponse(40004, "修改失败"))
+		return
+	}
+	ctx.JSON(200, utils.SuccessResponse(nil))
 }
 
 func PraiseOrNot(c context.Context, ctx *app.RequestContext) {}
