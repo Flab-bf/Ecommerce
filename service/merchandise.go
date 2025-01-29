@@ -62,3 +62,7 @@ func InCart(uid int, info *model.Product) {
 		info.IsAddedCart = false
 	}
 }
+
+func Order() {
+	dao.Order()
+}

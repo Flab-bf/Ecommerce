@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"ecommerce/model"
 	"ecommerce/service"
 	"ecommerce/utils"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -18,8 +19,8 @@ func GetProductList(ctx context.Context, c *app.RequestContext) {
 }
 
 func AddCart(ctx context.Context, c *app.RequestContext) {
-	var productId map[string]int
-	err := c.Bind(&productId)
+	productIdString := c.PostForm("product_id")
+	productId, err := strconv.Atoi(productIdString)
 	if err != nil {
 		c.JSON(400, utils.ErrorResponse(10001, "参数错误"))
 		return
@@ -34,7 +35,7 @@ func AddCart(ctx context.Context, c *app.RequestContext) {
 		c.JSON(500, utils.ErrorResponse(10002, "发生了意料之外的错误"))
 		return
 	}
-	err = service.AddCart(productId["product_id"], userId)
+	err = service.AddCart(productId, userId)
 	if err != nil {
 		c.JSON(400, utils.ErrorResponse(30002, "添加失败"))
 		return
@@ -100,8 +101,9 @@ func GetInfoFromType(ctx context.Context, c *app.RequestContext) {
 
 func SearchProduct(c context.Context, ctx *app.RequestContext) {
 	pname := ctx.Query("name")
+	var nilInfo model.Product
 	info, err := service.GetProductFromName(pname)
-	if err != nil {
+	if err != nil || info == nilInfo {
 		ctx.JSON(404, utils.ErrorResponse(30003, "Not Found"))
 		return
 	}
@@ -120,5 +122,5 @@ func SearchProduct(c context.Context, ctx *app.RequestContext) {
 }
 
 func GetOrder(c context.Context, ctx *app.RequestContext) {
-
+	service.Order()
 }

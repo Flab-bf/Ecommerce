@@ -11,7 +11,7 @@ import (
 )
 
 func UserRegister(ctx context.Context, c *app.RequestContext) {
-	var req model.UserMassage
+	var req model.UserChangePassword
 	err := c.Bind(&req)
 	if err != nil {
 		c.JSON(400, utils.ErrorResponse(10001, "参数错误"))
@@ -26,12 +26,15 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 }
 
 func UserLogin(ctx context.Context, c *app.RequestContext) {
+	var umsg model.UserChangePassword
 	var req model.UserMassage
-	err := c.Bind(&req)
+	err := c.Bind(&umsg)
 	if err != nil {
 		c.JSON(400, utils.ErrorResponse(10001, "参数错误"))
 		return
 	}
+	req.Account = umsg.Account
+	req.Password = umsg.Password
 	err, t, rt := service.LoginUser(&req)
 	if err != nil {
 		c.JSON(401, utils.ErrorResponse(20003, "用户名或密码错误"))
@@ -44,8 +47,13 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 }
 
 func RefreshToken(ctx context.Context, c *app.RequestContext) {
-	refreshToken := c.Query("refresh_token")
-	myClaims, err := utils.ParseRefreshToken(refreshToken)
+	var refreshToken model.UserToken
+	err := c.Bind(&refreshToken)
+	if err != nil {
+		c.JSON(400, utils.ErrorResponse(10002, "参数错误"))
+		return
+	}
+	myClaims, err := utils.ParseRefreshToken(refreshToken.RefreshToken)
 	if err != nil {
 		c.JSON(500, utils.ErrorResponse(10002, "解析错误"))
 		return
@@ -56,7 +64,7 @@ func RefreshToken(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	c.JSON(200, utils.SuccessResponse(map[string]interface{}{
-		"refresh_token": refreshToken,
+		"refresh_token": refreshToken.RefreshToken,
 		"token":         t,
 	}))
 }
@@ -102,6 +110,8 @@ func ChangeUserInfo(ctx context.Context, c *app.RequestContext) {
 		c.JSON(400, utils.ErrorResponse(10001, "参数错误"))
 		return
 	}
+	uid, _ := c.Get("uid")
+	req.Uid = uid.(int)
 	err = service.ChangeUserInfo(&req)
 	if err != nil {
 		c.JSON(400, utils.ErrorResponse(20004, "用户信息更新失败"))

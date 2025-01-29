@@ -3,6 +3,7 @@ package dao
 import (
 	"ecommerce/model"
 	"errors"
+	"fmt"
 )
 
 func GetProductList() ([]model.Product, error) {
@@ -11,6 +12,7 @@ func GetProductList() ([]model.Product, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+	fmt.Println(List)
 	return List, nil
 }
 
@@ -83,4 +85,8 @@ func InCart(pid int, uid int) bool {
 		return false
 	}
 	return true
+}
+
+func Order() {
+
 }

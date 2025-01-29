@@ -65,7 +65,7 @@ func GetUserInfo(account int) (model.UserMassage, error) {
 }
 
 func PutUserInfo(req *model.UserMassage) error {
-	result := DB.Model(&model.UserMassage{}).Where("account=?", req.Account).Updates(req)
+	result := DB.Model(&model.UserMassage{}).Where("uid=?", req.Uid).Updates(req)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -97,11 +97,11 @@ func PostTokenJwt(uid int) (string, string) {
 		if result.Error != nil {
 			return "", ""
 		}
-		return "", ""
-	}
-	result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Updates(&token)
-	if result.Error != nil {
-		return "", ""
+	} else {
+		result := DB.Model(&model.UserToken{}).Where("uid=?", uid).Updates(&userToken)
+		if result.Error != nil {
+			return "", ""
+		}
 	}
 	return token, refreshToken
 }

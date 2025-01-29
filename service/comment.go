@@ -66,3 +66,7 @@ func UpdateComment(cmt *model.Comment) error {
 	cmt.PublishTime = time.Now().Format("2006-01-02 15:04:05")
 	return dao.Update(cmt)
 }
+
+func IsPraised(pid int64, ipd int, uid int) error {
+	return dao.Praise(pid, ipd, uid)
+}

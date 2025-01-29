@@ -10,13 +10,14 @@ import (
 func NewRouter() *server.Hertz {
 	h := server.Default(server.WithTLS(utils.ConnectHttps()), server.WithHostPorts(":8080"))
 	user := h.Group("/user")
+	user.Use(middleWares.JwtAuthMiddleware())
 	//用户注册
 	h.POST("/user/register", api.UserRegister)
 	//登录
 	h.POST("/user/token", api.UserLogin)
 	//刷新token
 	//需要前端在token过期前发送刷新请求
-	user.GET("/token/refresh", api.RefreshToken)
+	user.POST("/token/refresh", api.RefreshToken)
 	//修改密码
 	user.PUT("/password", api.UpdatePassword)
 	//获取用户信息
@@ -31,7 +32,7 @@ func NewRouter() *server.Hertz {
 	//搜索商品
 	product.GET("/search", api.SearchProduct)
 	//加入购物车
-	product.PUT("/addCart", api.AddCart)
+	product.PUT("/addCart", api.AddCart) //该测试他了 ***************
 	//获取购物车列表
 	product.GET("/crat", api.CartInfo)
 	//获取商品详情

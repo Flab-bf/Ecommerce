@@ -3,14 +3,18 @@ package service
 import (
 	"ecommerce/dao"
 	"ecommerce/model"
+	"errors"
 )
 
-func RegisterUser(req *model.UserMassage) error {
-	is, err := dao.IsRepeatUser(req)
+func RegisterUser(req *model.UserChangePassword) error {
+	var umsg model.UserMassage
+	umsg.Account = req.Account
+	umsg.Password = req.Password
+	is, err := dao.IsRepeatUser(&umsg)
 	if err != nil || is {
 		return err //账号重复
 	}
-	err = dao.CreateUser(req)
+	err = dao.CreateUser(&umsg)
 	if err != nil {
 		return err
 	}
@@ -27,6 +31,9 @@ func LoginUser(req *model.UserMassage) (error, string, string) {
 		return err, "", ""
 	}
 	token, refreshToken := dao.PostTokenJwt(req.Uid)
+	if refreshToken == "" || token == "" {
+		return errors.New("nil token"), "", ""
+	}
 	return nil, token, refreshToken
 }
 

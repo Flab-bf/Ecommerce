@@ -78,4 +78,21 @@ func UpdateComment(c context.Context, ctx *app.RequestContext) {
 	ctx.JSON(200, utils.SuccessResponse(nil))
 }
 
-func PraiseOrNot(c context.Context, ctx *app.RequestContext) {}
+func PraiseOrNot(c context.Context, ctx *app.RequestContext) {
+	modelIdString := ctx.PostForm("model")
+	postIdString := ctx.PostForm("comment_id")
+	praise, err := strconv.Atoi(modelIdString)
+	postId, er := strconv.ParseInt(postIdString, 10, 64)
+	if err != nil || er != nil {
+		ctx.JSON(400, utils.ErrorResponse(10002, "参数错误"))
+		return
+	}
+	uid, _ := ctx.Get("uid")
+	uidInt := uid.(int)
+	err = service.IsPraised(postId, praise, uidInt)
+	if err != nil {
+		ctx.JSON(500, utils.ErrorResponse(40004, "发生错误"))
+		return
+	}
+	ctx.JSON(200, utils.SuccessResponse(nil))
+}

@@ -2,6 +2,8 @@ package dao
 
 import (
 	"ecommerce/model"
+	"errors"
+	"gorm.io/gorm"
 )
 
 func IsPraise(uid int, info *[]model.Comment) (*[]model.Comment, error) {
@@ -82,6 +84,24 @@ func Update(cmt *model.Comment) error {
 	result := DB.Model(&model.Comment{}).Where("post_id=?", cmt.PostId).Updates(cmt)
 	if result.Error != nil {
 		return result.Error
+	}
+	return nil
+}
+
+func Praise(pid int64, ipd int, uid int) error {
+	var prs model.Praise
+	result := DB.Model(&model.Comment{}).Select("parent_id,product_id").
+		Where("post_id=?", pid).First(&prs)
+	if result.Error != nil {
+		return result.Error
+	}
+	prs.UserId = uid
+	prs.PostId = pid
+	prs.IsPraised = ipd
+	result = DB.Model(&model.Praise{}).Create(&prs)
+	rsut := DB.Model(&model.Comment{}).Where("post_id", prs.PostId).Update("praise_count", gorm.Expr("praise_count+?", 1))
+	if result.Error != nil || rsut.Error != nil {
+		return errors.New("error update")
 	}
 	return nil
 }

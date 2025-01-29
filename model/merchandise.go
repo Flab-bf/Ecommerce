@@ -6,7 +6,7 @@ type Product struct {
 	Description string  `gorm:"type:text" json:"description"`
 	Type        string  `gorm:"type:varchar(100)" json:"type"`
 	CommentNum  int     `gorm:"type:int" json:"commentNum"`
-	Prise       float64 `gorm:"type:decimal(10,2)" json:"price"`
+	Price       float64 `gorm:"type:decimal(10,2)" json:"price"`
 	IsAddedCart bool    `gorm:"type:tinyint;column:is_addedCart" json:"isAddedCart"`
 	Cover       string  `gorm:"varchar(255)" json:"cover"`
 	PublishTime string  `gorm:"type:varchar(50)" json:"publishTime"`
