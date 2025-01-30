@@ -60,7 +60,7 @@ func DeleteComment(c context.Context, ctx *app.RequestContext) {
 		ctx.JSON(400, utils.ErrorResponse(40003, "删除失败"))
 		return
 	}
-	ctx.JSON(200, utils.SuccessResponse(10000))
+	ctx.JSON(200, utils.SuccessResponse(nil))
 }
 
 func UpdateComment(c context.Context, ctx *app.RequestContext) {

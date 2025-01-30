@@ -18,7 +18,7 @@ func GetProductList() ([]model.Product, error) {
 
 func FindProductToCart(id int) (error, model.Cart) {
 	var cart model.Cart
-	result := DB.Model(&model.Product{}).Where("product_id=?", id).First(&cart)
+	result := DB.Model(&model.Product{}).Omit("user_id").Where("product_id=?", id).First(&cart)
 	if result.Error != nil {
 		return result.Error, model.Cart{}
 	}
@@ -27,7 +27,6 @@ func FindProductToCart(id int) (error, model.Cart) {
 		return result.Error, model.Cart{}
 	}
 	return nil, cart
-
 }
 
 func AddCart(cart model.Cart) error {

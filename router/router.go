@@ -32,9 +32,9 @@ func NewRouter() *server.Hertz {
 	//搜索商品
 	product.GET("/search", api.SearchProduct)
 	//加入购物车
-	product.PUT("/addCart", api.AddCart) //该测试他了 ***************
+	product.PUT("/addCart", api.AddCart)
 	//获取购物车列表
-	product.GET("/crat", api.CartInfo)
+	product.GET("/cart", api.CartInfo)
 	//获取商品详情
 	product.GET("/info/:product_id", api.GetInfoFromId)
 	//获取相应标签的商品列表

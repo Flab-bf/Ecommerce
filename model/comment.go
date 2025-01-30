@@ -8,8 +8,8 @@ type Comment struct {
 	UserId      int       `gorm:"type:int" json:"userId"`
 	Avatar      string    `gorm:"type:varchar(255)" json:"avatar"`
 	NickName    string    `gorm:"type:varchar(255)" json:"nickName"`
-	PraiseCount int       `gorm:"-" json:"praiseCount"`
-	IsPraised   int       `gorm:"type:int" json:"isPraised"` //0:未处理;1:点赞;2:点踩
+	PraiseCount int       `gorm:"type:int" json:"praiseCount"`
+	IsPraised   int       `gorm:"-" json:"isPraised"` //0:未处理;1:点赞;2:点踩
 	ProductId   int       `gorm:"type:int" json:"productId"`
 	Reply       []Comment `gorm:"-" json:"reply"`
 }
