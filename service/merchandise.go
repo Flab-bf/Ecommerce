@@ -63,6 +63,10 @@ func InCart(uid int, info *model.Product) {
 	}
 }
 
-func Order() {
-	dao.Order()
+func Order(uid int)(int64,error) {
+	oid,err:=dao.Order(uid)
+	if err != nil {
+		return 0,err
+	}
+	return oid,nil
 }

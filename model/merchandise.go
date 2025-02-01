@@ -23,3 +23,16 @@ type Cart struct {
 	Link      string  `gorm:"type:varchar(255)" json:"link"`
 	Num       int     `gorm:"type:int" json:"num"`
 }
+
+type Order struct {
+	OrderId int64   `gorm:"type:bigint;primaryKey"`
+	Uid     int     `gorm:"type:int"`
+	Price   float64 `gorm:"type:decimal(10,2)"`
+}
+
+type OrderInfo struct {
+	OrderId   int64   `gorm:"type:bigint;primaryKey"`
+	ProductId int     `gorm:"type:int"`
+	Price     float64 `gorm:"type:decimal(10,2)"`
+	Num       int     `gorm:"type:int"`
+}

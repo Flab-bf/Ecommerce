@@ -122,5 +122,16 @@ func SearchProduct(c context.Context, ctx *app.RequestContext) {
 }
 
 func GetOrder(c context.Context, ctx *app.RequestContext) {
-	service.Order()
+	uid, _ := ctx.Get("uid")
+	uidInt, ok := uid.(int)
+	if !ok {
+		ctx.JSON(500, utils.ErrorResponse(10002, "意外错误"))
+		return
+	}
+	oid, err := service.Order(uidInt)
+	if err != nil {
+		ctx.JSON(404, utils.ErrorResponse(30004, "未获取订单"))
+		return
+	}
+	ctx.JSON(200, utils.SuccessResponse(map[string]interface{}{"order_id": oid}))
 }
