@@ -3,7 +3,6 @@ package dao
 import (
 	"ecommerce/model"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +12,6 @@ func GetProductList() ([]model.Product, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	fmt.Println(List)
 	return List, nil
 }
 
@@ -62,11 +60,11 @@ func GetProductFromId(pid int) (model.Product, error) {
 	return info, nil
 }
 
-func GetProductFromType(ty string) (model.Product, error) {
-	var info model.Product
+func GetProductFromType(ty string) ([]model.Product, error) {
+	var info []model.Product
 	result := DB.Model(&model.Product{}).Where("type=?", ty).Find(&info)
 	if result.Error != nil {
-		return model.Product{}, result.Error
+		return []model.Product{}, result.Error
 	}
 	return info, nil
 }

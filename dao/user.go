@@ -40,7 +40,7 @@ func IsAccountAndPassword(password string, account int) error {
 		return result.Error //查询失败
 	}
 	if selectPassword.Password != password {
-		return result.Error //密码错误
+		return errors.New("密码错误") //密码错误
 	}
 	return nil
 }

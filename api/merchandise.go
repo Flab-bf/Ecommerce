@@ -79,15 +79,18 @@ func GetInfoFromId(ctx context.Context, c *app.RequestContext) {
 	if !ok {
 		c.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
 	}
-	service.InCart(userId, &info)
-	c.JSON(200, utils.SuccessResponse(info))
+	sliceInfo := make([]model.Product, 1)
+	sliceInfo[0] = info
+	service.InCart(userId, &sliceInfo)
+	c.JSON(200, utils.SuccessResponse(sliceInfo[0]))
 }
 
 func GetInfoFromType(ctx context.Context, c *app.RequestContext) {
 	ptype := c.Param("type")
+
 	info, err := service.GetProductFromType(ptype)
-	if err != nil {
-		c.JSON(404, utils.ErrorResponse(30003, "未知商品"))
+	if err != nil || len(info) == 0 {
+		c.JSON(404, utils.ErrorResponse(30003, "未知商品类型"))
 		return
 	}
 	uid, _ := c.Get("uid")
@@ -116,7 +119,10 @@ func SearchProduct(c context.Context, ctx *app.RequestContext) {
 			ctx.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
 			return
 		}
-		service.InCart(userId, &info)
+		sliceInfo := make([]model.Product, 1)
+		sliceInfo[0] = info
+		service.InCart(userId, &sliceInfo)
+		info.IsAddedCart = sliceInfo[0].IsAddedCart
 	}
 	ctx.JSON(200, utils.SuccessResponse(info))
 }
