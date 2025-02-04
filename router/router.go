@@ -43,7 +43,7 @@ func NewRouter() *server.Hertz {
 	comment := h.Group("/comment")
 	comment.Use(middleWares.JwtAuthMiddleware())
 	//获取评论
-	comment.GET("/:product_id", api.GetComment)
+	h.GET("/comment/:product_id", api.GetComment)
 	//评论,回复(有无父评论ID)
 	comment.POST("/:product_id", api.Comment)
 	//删除评论
