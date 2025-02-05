@@ -3,13 +3,13 @@ package service
 import (
 	"ecommerce/dao"
 	"ecommerce/model"
+	"ecommerce/utils"
 	"github.com/cloudwego/hertz/pkg/app"
+	"strings"
 	"time"
 )
 
 func GetProductComment(pid int, ctx *app.RequestContext) (*[]model.Comment, error) {
-	uid, _ := ctx.Get("uid")
-	uidInt := uid.(int)
 	info, err := dao.GetProductComment(pid)
 	if err != nil {
 		return nil, err
@@ -18,10 +18,26 @@ func GetProductComment(pid int, ctx *app.RequestContext) (*[]model.Comment, erro
 	if err != nil {
 		return nil, err
 	}
-	info, err = dao.IsPraise(uidInt, info)
-	if err != nil {
-		return nil, err
+	//检验token是否合法登录，获取点踩信息
+	authHeader := ctx.Request.Header.Get("Authorization")
+	if authHeader != "" {
+
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			authHeader = strings.TrimPrefix(authHeader, "Bearer ")
+		}
+
+		myClaims, er := utils.ParseAccessToken(authHeader)
+		if er == nil && myClaims.Uid != 0 {
+			ok, e := dao.IsLegalUser(myClaims.Uid)
+			if ok && e == nil {
+				info, err = dao.IsPraise(myClaims.Uid, info)
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
 	}
+
 	return info, nil
 }
 

@@ -66,7 +66,11 @@ func Comment(cmt *model.Comment) (int64, error) {
 }
 
 func Reply(cmt *model.Comment) (int64, error) {
-	result := DB.Model(&model.Comment{}).Create(cmt)
+	result := DB.Model(&model.Comment{}).Select("product_id").Where("post_id=?", cmt.ParentId).First(&cmt)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	result = DB.Model(&model.Comment{}).Create(cmt)
 	if result.Error != nil {
 		return 0, result.Error
 	}
