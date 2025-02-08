@@ -3,6 +3,7 @@ package dao
 import (
 	"ecommerce/model"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -46,18 +47,23 @@ func GetReply(info *[]model.Comment) (*[]model.Comment, error) {
 }
 
 func CommentGetUmsg(cmt *model.Comment) (*model.Comment, error) {
-	result := DB.Model(&model.UserMassage{}).Select("nick_name").Where("uid=?", cmt.UserId).First(&cmt.NickName)
-	if result.Error != nil {
-		return nil, result.Error
+
+	if cmt.NickName == "false" {
+		cmt.NickName = "匿名评论"
+	} else {
+		result := DB.Model(&model.UserMassage{}).Select("nick_name").Where("uid=?", cmt.UserId).First(&cmt.NickName)
+		if result.Error != nil {
+			return nil, result.Error
+		}
 	}
-	result = DB.Model(model.UserMassage{}).Select("avatar").Where("uid=?", cmt.UserId).First(&cmt.Avatar)
+	fmt.Println(cmt.NickName)
+	result := DB.Model(model.UserMassage{}).Select("avatar").Where("uid=?", cmt.UserId).First(&cmt.Avatar)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return cmt, nil
 }
 func Comment(cmt *model.Comment) (int64, error) {
-
 	result := DB.Model(&model.Comment{}).Omit("parent_id").Create(cmt)
 	if result.Error != nil {
 		return 0, result.Error
