@@ -1,0 +1,488 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 加载遮罩层样式 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.01s ease-out;
+}
+
+/* 加载动画 */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 加载完成后的隐藏状态 */
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 页面主体留白 */
+body {
+    padding-top: 80px;
+}
+
+/* 导航栏样式 */
+.top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: aliceblue;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999;
+    min-width: 1500px;
+    flex-wrap: nowrap;
+}
+
+/* 左侧图片/logo */
+.top .class:first-child {
+    width: auto;
+    height: 40px;
+    flex-shrink: 0;
+    margin-right: 20px;
+}
+
+.top .class:first-child img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.top .class {
+    display: inline-block;
+    width: 50px;
+    height: 40px;
+    font-size: 30px;
+    text-align: center;
+    line-height: 40px;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+/* 用户信息样式（新增：头像适配） */
+.top .userlr {
+    display: inline-block;
+    width: 200px;
+    height: 40px;
+    font-size: 30px;
+    text-align: center;
+    line-height: 40px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* 头像样式（新增） */
+.user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.top .class a,
+.top .userlr a {
+    color: #6610f2;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.search-box {
+    flex: 1;
+    margin: 0 20px;
+    min-width: 200px;
+}
+
+.search-box input {
+    width: 100%;
+    height: 40px;
+    padding: 0 15px;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    font-size: 16px;
+    outline: none;
+}
+
+/* 用户头像样式 */
+.user-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+    border: 1px solid #eee !important;
+    vertical-align: middle;
+}
+
+/* 加载层隐藏样式 */
+.loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.search-box input:focus {
+    border-color: #6610f2;
+    box-shadow: 0 0 5px rgba(102, 16, 242, 0.2);
+}
+
+/* 轮播图和商品列表样式（如果有需要补充，这里保留原有） */
+.carousel {
+    width: 80%;
+    margin: 20px auto;
+    overflow: hidden;
+    position: relative;
+}
+.carousel-slides {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+.carousel-slide {
+    min-width: 100%;
+}
+.slide-img {
+    width: 100%;
+    height: auto;
+}
+.carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+}
+.indicator.active {
+    background: #6610f2;
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+}
+.prev-btn {
+    left: 20px;
+}
+.next-btn {
+    right: 20px;
+}
+#productList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: center;
+}
+.shop {
+    width: 200px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+.shop .tu-pian img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* 主容器 - 左中右比例布局 */
+.main-container {
+    display: flex;
+    width: 100%;
+    height: 80vh;
+    gap: 0;
+    box-sizing: border-box;
+}
+
+/* 左侧列 - 占比 21% */
+.left {
+    flex: 21%;
+    background-color: #f0f8ff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 中间列 - 占比 53%（轮播图区域） */
+.central {
+    flex: 53%;
+    background-color: #f5f5f5;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 右侧列 - 占比 26% */
+.right {
+    flex: 26%;
+    background-color: #fdf5e6;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 灰白风格轮播核心样式 */
+.carousel {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    color: #333;
+    padding: 40px; /* 轮播容器内边距，让图片和边框保持距离 */
+}
+.carousel-slides {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.6s ease;
+}
+.carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 12px; /* 轮播项圆角，和图片圆角呼应 */
+    overflow: hidden; /* 裁剪图片超出圆角的部分 */
+}
+
+/* 轮播图片样式 - 主体展示 */
+.slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 图片完全覆盖容器，保持比例 */
+    border-radius: 10px; /* 图片圆角（比容器小2px，避免和容器圆角重叠） */
+}
+
+/* 控制箭头 - 灰白风格 */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255,255,255,0.8);
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+/* 调整箭头位置，适配内边距 */
+.prev-btn { left: 20px; }
+.next-btn { right: 20px; }
+
+.carousel-btn:hover {
+    background-color: #666;
+    color: #fff;
+    border-color: #666;
+}
+
+/* 多圆点指示器 - 灰白样式 */
+.carousel-indicators {
+    position: absolute;
+    bottom: 25px; /* 调整指示器位置，适配内边距 */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+    padding: 8px 15px;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+.indicator.active {
+    background-color: #333;
+    transform: scale(1.2);
+    border-color: #ccc;
+}
+
+/* 容器样式 - 实现每行5个的核心布局 */
+.shops {
+    display: flex;          /* 启用弹性布局 */
+    flex-wrap: wrap;       /* 自动换行 */
+    gap: 10px;             /* 商品卡片之间的间距（可选） */
+    padding: 10px;         /* 容器内边距（可选） */
+    justify-content: flex-start; /* 左对齐排列 */
+}
+
+/* 商品卡片样式 */
+.shop {
+    flex: 0 0 calc(20% - 8px); /* 计算宽度：20%是1/5，减去间距的一半 */
+    box-sizing: border-box;    /* 盒模型：宽度包含内边距和边框 */
+    margin-bottom: 10px;       /* 行间距（可选） */
+}
+
+/* 图片容器 - 保持图片比例的关键 */
+.tu-pian {  /* 修正了原有的空格类名，规范命名为tu-pian */
+    width: 100%;              /* 宽度自适应卡片 */
+    aspect-ratio: 16 / 9;      /* 保持图片比例（可根据实际需求调整，比如4/3、16/9） */
+    overflow: hidden;         /* 隐藏超出容器的部分 */
+}
+
+/* 图片样式 */
+.tu-pian img {
+    width: 100%;              /* 宽度铺满容器 */
+    height: 100%;             /* 高度铺满容器 */
+    object-fit: cover;        /* 保持比例并填充容器（不会拉伸变形） */
+    display: block;           /* 去除图片默认的行内间隙 */
+}
+
+/* 文字样式（可选优化） */
+.wen-zi {  /* 修正类名规范为wen-zi */
+    text-align: center;       /* 文字居中 */
+    padding: 5px 0;           /* 上下内边距 */
+}
+
+
+
+
+/* 客服按钮容器 - 固定定位在右下角 */
+.customer-service-btn {
+    position: fixed;       /* 固定定位 */
+    right: 32px;          /* 距离右侧 8px = 32px（原 right-8） */
+    bottom: 32px;         /* 距离底部 8px = 32px（原 bottom-8） */
+    z-index: 50;          /* 层级置顶（原 z-50） */
+}
+
+/* 按钮样式 */
+.service-button {
+    width: 64px;          /* 16px = 64px（原 w-16） */
+    height: 64px;         /* 16px = 64px（原 h-16） */
+    background-color: #2563eb; /* 蓝色（原 bg-blue-600） */
+    color: white;         /* 文字白色（原 text-white） */
+    border-radius: 50%;   /* 圆形（原 rounded-full） */
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5); /* 阴影（原 shadow-2xl shadow-blue-400） */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;         /* 去除默认边框 */
+    cursor: pointer;      /* 鼠标指针 */
+    transition: transform 0.2s ease; /* 缩放过渡（原 transition-transform） */
+    font-size: 24px;      /* 图标基础大小 */
+}
+
+/* 鼠标悬浮缩放效果（原 hover:scale-110） */
+.service-button:hover {
+    transform: scale(1.1); /* 放大 10% */
+}
+
+/* 提示文字 */
+.tooltip-text {
+    position: absolute;
+    right: 80px;          /* 按钮右侧 20px = 80px（原 right-20） */
+    background-color: white; /* 白色背景（原 bg-white） */
+    color: #1e293b;       /* 深灰色文字（原 text-slate-900） */
+    padding: 8px 16px;    /* 内边距（原 px-4 py-2） */
+    border-radius: 12px;  /* 圆角（原 rounded-xl） */
+    font-size: 14px;      /* 文字大小（原 text-sm） */
+    font-weight: bold;    /* 粗体（原 font-bold） */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* 阴影（原 shadow-lg） */
+    opacity: 0;           /* 默认隐藏（原 opacity-0） */
+    transition: opacity 0.2s ease; /* 透明度过渡（原 transition-opacity） */
+    white-space: nowrap;  /* 不换行（原 whitespace-nowrap） */
+    pointer-events: none; /* 不触发鼠标事件，避免遮挡按钮 */
+}
+
+/* 悬浮显示提示文字（原 group-hover:opacity-100） */
+.customer-service-btn:hover .tooltip-text {
+    opacity: 1;           /* 显示文字 */
+}
+
+/* 可选：替换为客服图标（如果没有 iconify，用文字替代） */
+.service-icon {
+    /* 如需使用字体图标，可替换这里的内容 */
+    /* 示例：使用 Font Awesome 图标 <i class="fa-solid fa-headset"></i> */
+    /* 纯文字替代方案 */
+    font-family: "Microsoft Yahei";
+}
+
+
+
+
+/* 基础页脚样式 */
+footer {
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 30px 0;
+    margin-top: 50px;
+    border-top: 1px solid #eee;
+}
+
+.footer-links a {
+    margin-right: 20px;
+    color: #666;
+    text-decoration: none;
+}
+.footer-copyright {
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}

@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"ecommerce/model"
-	"ecommerce/utils"
+	"ecommerce/backend/model"
+	"ecommerce/backend/utils"
 	"errors"
 	"time"
 )

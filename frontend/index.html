@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ecommerce</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!--    加载页面-->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div>加载资源中...</div>
+    </div>
+
+<!--导航栏-->
+    <div class="top">
+            <img src="assets/1728899126126.jpg" alt="首页" width="5%" height="auto" class="class">
+            <div class="class" >
+                <a href="https://www.baidu.com" target="_blank">aaa</a>
+            </div>
+            <div class="class">
+                <a href="https://www.baidu.com" TARGET="_self">bbb</a>
+            </div>
+            <div class="class">
+                <a href="https://www.baidu.com" target="_blank">ccc</a>
+            </div>
+            <div class="class">
+                <a href="https://www.baidu.com" target="_blank">ddd</a>
+            </div>
+            <!-- 中间搜索栏 -->
+            <div class="search-box">
+                <input type="search" placeholder="请输入搜索内容...">
+            </div>
+
+            <div class="userlr">
+                <a href="login.html" id="userLink">登录/注册</a>
+            </div>
+    </div>
+
+<!--主页-->
+<div class="main-container">
+    <!--    左-->
+    <div class="left">
+        <P>左</P>
+    </div>
+
+    <!-- 中 -->
+    <div class="central">
+        <div class="carousel">
+            <div class="carousel-slides" id="carousel-slides"></div>
+            <button class="carousel-btn prev-btn" id="prev-btn">◀</button>
+            <button class="carousel-btn next-btn" id="next-btn">▶</button>
+            <div class="carousel-indicators" id="carousel-indicators"></div>
+        </div>
+    </div>
+
+    <!--    右-->
+    <div class="right">
+        <P>右</P>
+    </div>
+</div>
+
+<div class="shops" id="productList">
+    <div style="width: 100%; text-align: center;">正在加载商品...</div>
+</div>
+
+<!-- 客服悬浮按钮 -->
+<div class="customer-service-btn">
+    <button class="service-button">
+        <!-- 方案1：使用字体图标（推荐） -->
+        <i class="fa-solid fa-headset service-icon"></i>
+
+        <!-- 方案2：纯文字替代（无图标库时使用） -->
+<!--         <span class="service-icon">客服</span>-->
+    </button>
+    <span class="tooltip-text">需要客服帮助吗？</span>
+</div>
+
+<footer>
+    <hr>
+    <div class="footer-copyright">-------------------------------------------占位符-------------------------------------------</div>
+    <div class="footer-copyright">------占位符------</div>
+</footer>
+
+<script src="js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=!, initial-scale=1.0">
+    <title>登录界面</title>
+    <style>
+        .head{
+            width: 200px;
+            margin: 30px auto;
+            text-align: center;
+            
+        }
+        .uname{
+            text-align: center;
+        }
+        .uname1{
+            text-align: center;
+            background-color: #fff;
+            font-size: 16px;
+            color: #333;
+        }
+        input{
+            width: 286px;
+            height: 45px;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+
+        }
+        img{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid grey;
+
+        }
+        button{
+            width: 286px;
+            height: 48px;
+            border: none;
+            border-radius: 8px;
+            background-color: #12B7F5;
+            text-align: center;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover{
+            background-color: #0d8dd7;
+        }
+        button:active{
+            background-color: #e5e7eb;
+            transform: scale(0.90);
+        }
+        body{
+            background-color: #f0f9ff;
+        }
+         #msg{
+            color: #333;
+            background-color: #fff;
+            text-align: center;
+        }
+        .footer{
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div id="msg"></div>
+    <div class="head"><img src="./素材/wode.png" alt=""></div>
+    <div class="uname"><input type="text" placeholder="请输入账号" id="name"></div><br>
+    <div class="uname"><input type="password" placeholder="请输入密码" id="password"></div><br>
+    <div class="uname"><button id="denlu">登录</button></div><br>
+    <div class="uname"><button class="uname1" onclick="location.href='register.html'">注册</button></div><br>
+    <script>
+        function showmsg(text){
+            const msg=document.getElementById('msg')
+            msg.innerHTML=text
+            msg.style.display='block'
+            setTimeout(()=>{
+                msg.style.display='none'
+            },2000)
+
+        }
+        document.getElementById('denlu').onclick=function(){
+            const name=document.getElementById('name').value
+            const password=document.getElementById('password').value
+            if(!name||!password){
+                alert('请填写完整信息')
+                return
+            }
+            fetch('http://localhost:8080/user/token',{
+                method:'POST',
+                headers:{'content-type':'application/json'},
+                body:JSON.stringify({
+                    account: parseInt(name),
+                    password
+                })})
+                .then(res=>res.json())
+                .then(data=>{
+                    console.log('登录接口返回完整数据：', data);
+                    if(data.status===10000){
+                        showmsg('登录成功')
+                        // 存储token和refreshToken
+                        localStorage.setItem('token', data.date.token)
+                        localStorage.setItem('refreshToken', data.date.refreshToken)
+                        localStorage.setItem('userId', data.date.userId)
+                        setTimeout(()=>location.href='index.html',2000)
+
+                    }
+                    else{
+                        // 当用户没有注册或密码错误时，显示账号或密码错误
+                        showmsg(data.info||'账号或密码错误')
+                    }
+                })
+                .catch(()=>showmsg('请求失败'))
+        }
+        
+      
+    </script>
+</body>
+</html>

@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	"ecommerce/model"
-	"ecommerce/service"
-	"ecommerce/utils"
+	"ecommerce/backend/model"
+	"ecommerce/backend/service"
+	"ecommerce/backend/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"strconv"
 )
@@ -65,6 +65,7 @@ func CartInfo(ctx context.Context, c *app.RequestContext) {
 func GetInfoFromId(ctx context.Context, c *app.RequestContext) {
 	pid := c.Param("product_id")
 	id, err := strconv.Atoi(pid)
+
 	if err != nil {
 		c.JSON(500, utils.ErrorResponse(10002, "发生意外错误"))
 		return
@@ -111,7 +112,7 @@ func SearchProduct(c context.Context, ctx *app.RequestContext) {
 		return
 	}
 	uid, is := ctx.Get("uid")
-	if !is {
+	if uid == nil && !is {
 		info.IsAddedCart = false
 	} else {
 		userId, ok := uid.(int)

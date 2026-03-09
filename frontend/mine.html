@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN"> <!-- 改为中文更适配 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            height: 36px;
+            background-color: rgb(238, 246, 248);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+        }
+        .header a {
+            color: rgb(49, 54, 57);
+            text-decoration: none;
+            margin-left: 20px;
+        }
+        .header a:hover {
+            color: #0088ff; /* 新增：hover样式提升体验 */
+        }
+        .user-info {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .user-header {
+            margin-bottom: 20px;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            object-fit: cover; /* 新增：防止头像变形 */
+            border: 1px solid #eee;
+        }
+        .account-info {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .user-detail {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            text-align: left;
+            padding: 0 20px;
+        }
+        #msg {
+            color: #333;
+            background-color: #fff;
+            text-align: center;
+            padding: 10px;
+            margin: 10px 20px;
+            border-radius: 4px;
+            display: none;
+            border: 1px solid #eee;
+        }
+        .msg-error {
+            color: #ff4444;
+            border-color: #ffcccc;
+            background-color: #fff8f8;
+        }
+        .msg-success {
+            color: #00cc00;
+            border-color: #ccffcc;
+            background-color: #f8fff8;
+        }
+    </style>
+</head>
+<body>
+<div id="msg"></div>
+<div class="header">
+    <!-- 修正：返回首页指向index.html（原评论区.html） -->
+    <a href="index.html">返回首页</a>
+    <a href="change_password.html">修改密码</a>
+    <a href="#" id="logout">退出登录</a>
+</div>
+<div class="user-info">
+    <div class="user-header">
+        <img class="avatar" src="./素材/wode.png" alt="头像" id="avatar">
+        <div class="account-info" id="account">加载中...</div>
+        <div class="user-detail" id="userDetail">
+            <p>用户ID：<span id="userId">--</span></p>
+            <p>昵称：<span id="nickName">--</span></p>
+            <p>注册时间：<span id="registerTime">--</span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 优化提示函数：区分成功/错误样式
+    function showmsg(text, isSuccess = true) {
+        const msg = document.getElementById('msg');
+        msg.innerHTML = text;
+        msg.style.display = 'block';
+        // 切换样式类
+        msg.className = isSuccess ? 'msg-success' : 'msg-error';
+        setTimeout(() => {
+            msg.style.display = 'none';
+        }, 2000);
+    }
+
+    // 页面加载时执行
+    window.onload = function() {
+        checkLogin(); // 先检查登录态，再拉取用户信息
+    };
+
+    /**
+     * 检查登录状态（核心：读取localStorage的token和userId）
+     */
+    function checkLogin() {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId'); // 从本地读取真实userId，不再硬编码
+
+        // 双重校验：token和userId都必须存在
+        if (!token || !userId || userId === 'undefined') {
+            showmsg('请先登录', false);
+            setTimeout(() => location.href = 'login.html', 2000);
+            return;
+        }
+
+        // 登录态有效，拉取该用户的信息
+        getUserInfo(userId, token);
+    }
+
+    /**
+     * 获取用户信息（适配不同用户：传入真实userId和token）
+     * @param {string/number} userId - 本地存储的用户ID
+     * @param {string} token - 本地存储的token
+     */
+    function getUserInfo(userId, token) {
+        // 完整接口地址（补充域名+端口，和主页保持一致）
+        const apiUrl = `http://localhost:8080/user/info/${userId}`;
+
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                // 修正：Authorization头必须带Bearer前缀（和主页一致）
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => {
+                // 先校验HTTP状态码（非200直接抛错）
+                if (!res.ok) {
+                    throw new Error(`接口请求失败：${res.status}(${res.statusText})`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === 10000) {
+                    // 后端返回结构：data.date.date 是用户信息
+                    const userInfo = data.date?.date || {};
+                    renderUserInfo(userInfo, userId); // 渲染用户信息
+                } else {
+                    showmsg(data.info || '获取用户信息失败', false);
+                }
+            })
+            .catch(err => {
+                console.error('获取用户信息失败:', err);
+                showmsg('网络错误或接口异常', false);
+                // 接口报错时清空无效登录态
+                clearLoginState();
+                setTimeout(() => location.href = 'login.html', 2000);
+            });
+    }
+
+    /**
+     * 渲染用户信息到页面（适配不同字段）
+     * @param {object} userInfo - 后端返回的用户信息
+     * @param {string/number} userId - 用户ID
+     */
+    function renderUserInfo(userInfo, userId) {
+        console.log(userInfo);
+        // 渲染用户ID
+        document.getElementById('userId').textContent = userId;
+        // 渲染账号/昵称
+        const accountText = userInfo.nickName ? `昵称：${userInfo.nickName}` : '默认昵称'+userInfo.uid;
+        document.getElementById('account').textContent = accountText;
+        // 渲染昵称（备用）
+        document.getElementById('nickName').textContent = userInfo.nickName || '--';
+        // 渲染注册时间（如果后端返回）
+        document.getElementById('registerTime').textContent = userInfo.createdAt || '--';
+
+        // 渲染头像（优先用接口返回的，无则用默认）
+        if (userInfo.avatar && userInfo.avatar !== '{:url}') {
+            document.getElementById('avatar').src = userInfo.avatar;
+        }
+    }
+
+    /**
+     * 清空登录状态（统一封装）
+     */
+    function clearLoginState() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId'); // 新增：清空userId
+    }
+
+    // 退出登录功能（优化）
+    document.getElementById('logout').onclick = function(e) {
+        e.preventDefault();
+        clearLoginState(); // 调用统一的清空函数
+        showmsg('已成功退出登录');
+        setTimeout(() => location.href = 'login.html', 2000);
+    };
+</script>
+</body>
+</html>

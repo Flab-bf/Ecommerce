@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"ecommerce/model"
+	"ecommerce/backend/model"
 	"errors"
 	"gorm.io/gorm"
 )

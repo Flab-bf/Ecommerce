@@ -1,0 +1,140 @@
+package dao
+
+import (
+	model2 "ecommerce/backend/model"
+	"errors"
+	"fmt"
+	"gorm.io/gorm"
+)
+
+func IsPraise(uid int, info *[]model2.Comment) (*[]model2.Comment, error) {
+	for index, pc := range *info {
+		result := DB.Model(&model2.Praise{}).Select("is_praised").
+			Where("user_id=? AND post_id=? AND parent_id is NULL", uid, pc.PostId).
+			First(&(*info)[index].IsPraised)
+		if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, result.Error
+		}
+		for id, pct := range (*info)[index].Reply {
+			result = DB.Model(&model2.Praise{}).Select("is_praised").
+				Where("user_id=? AND post_id=? AND parent_id=?", uid, pct.PostId, pc.PostId).
+				First(&(*info)[index].Reply[id].IsPraised)
+			if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				return nil, result.Error
+			}
+		}
+	}
+	return info, nil
+}
+
+func GetProductComment(pid int) (*[]model2.Comment, error) {
+	var info []model2.Comment
+	result := DB.Model(&model2.Comment{}).Where("product_id=? AND  parent_id IS NULL", pid).Find(&info)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &info, nil
+}
+
+func GetReply(info *[]model2.Comment) (*[]model2.Comment, error) {
+	for index, comment := range *info {
+		result := DB.Model(&model2.Comment{}).Where("parent_id=?", comment.PostId).Find(&(*info)[index].Reply)
+		if result.Error != nil {
+			return nil, result.Error
+		}
+	}
+	return info, nil
+}
+
+func CommentGetUmsg(cmt *model2.Comment) (*model2.Comment, error) {
+
+	if cmt.NickName == "false" {
+		cmt.NickName = "匿名评论"
+	} else {
+		result := DB.Model(&model2.UserMassage{}).Select("nick_name").Where("uid=?", cmt.UserId).First(&cmt.NickName)
+		if result.Error != nil {
+			return nil, result.Error
+		}
+	}
+	fmt.Println(cmt.NickName)
+	result := DB.Model(model2.UserMassage{}).Select("avatar").Where("uid=?", cmt.UserId).First(&cmt.Avatar)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return cmt, nil
+}
+func Comment(cmt *model2.Comment) (int64, error) {
+	result := DB.Model(&model2.Comment{}).Omit("parent_id").Create(cmt)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return cmt.PostId, nil
+}
+
+func Reply(cmt *model2.Comment) (int64, error) {
+	result := DB.Model(&model2.Comment{}).Select("product_id").Where("post_id=?", cmt.ParentId).First(&cmt)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	result = DB.Model(&model2.Comment{}).Create(cmt)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return cmt.PostId, nil
+}
+
+func Delete(cid int) error {
+	result := DB.Model(&model2.Comment{}).Where("post_id=?", cid).Delete(&model2.Comment{})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func Update(cmt *model2.Comment) error {
+	result := DB.Model(&model2.Comment{}).Where("post_id=?", cmt.PostId).Updates(cmt)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func Praise(pid int64, ipd int, uid int) error {
+	var prs model2.Praise
+	result := DB.Model(&model2.Comment{}).Select("parent_id,product_id").
+		Where("post_id=?", pid).First(&prs)
+	if result.Error != nil {
+		return result.Error
+	}
+	prs.UserId = uid
+	prs.PostId = pid
+	prs.IsPraised = ipd
+	var count int64
+	result = DB.Model(&model2.Praise{}).Where("post_id=?", pid).Count(&count)
+	if result.Error != nil {
+		return result.Error
+	}
+	if count == 0 {
+		if prs.ParentId == 0 {
+			result = DB.Model(&model2.Praise{}).Omit("parent_id").Create(&prs)
+		} else {
+			result = DB.Model(&model2.Praise{}).Create(&prs)
+		}
+	} else {
+		if prs.ParentId == 0 {
+			result = DB.Model(&model2.Praise{}).Omit("parent_id").Where("post_id", pid).Updates(&prs)
+		} else {
+			result = DB.Model(&model2.Praise{}).Where("post_id", pid).Updates(&prs)
+		}
+	}
+	if result.Error != nil {
+		return result.Error
+	}
+	if ipd == 1 {
+		rsut := DB.Model(&model2.Comment{}).Where("post_id=?", prs.PostId).Update("praise_count", gorm.Expr("praise_count+?", 1))
+		if result.Error != nil || rsut.Error != nil {
+			return errors.New("error update")
+		}
+	}
+	return nil
+}

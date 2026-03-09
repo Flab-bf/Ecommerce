@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	"ecommerce/model"
-	"ecommerce/service"
-	"ecommerce/utils"
+	"ecommerce/backend/model"
+	"ecommerce/backend/service"
+	"ecommerce/backend/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"strconv"
 )

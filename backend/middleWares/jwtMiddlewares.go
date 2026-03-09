@@ -2,8 +2,8 @@ package middleWares
 
 import (
 	"context"
-	"ecommerce/dao"
-	"ecommerce/utils"
+	"ecommerce/backend/dao"
+	"ecommerce/backend/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"strings"
 )

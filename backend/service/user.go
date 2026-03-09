@@ -1,8 +1,8 @@
 package service
 
 import (
-	"ecommerce/dao"
-	"ecommerce/model"
+	"ecommerce/backend/dao"
+	"ecommerce/backend/model"
 	"errors"
 )
 
@@ -12,7 +12,7 @@ func RegisterUser(req *model.UserChangePassword) error {
 	umsg.Password = req.Password
 	is, err := dao.IsRepeatUser(&umsg)
 	if err != nil || is {
-		return err //账号重复
+		return errors.New("repeat") //账号重复
 	}
 	err = dao.CreateUser(&umsg)
 	if err != nil {

@@ -3,11 +3,11 @@ package model
 import "time"
 
 type UserMassage struct {
-	Uid          int       `gorm:"primaryKey;autoIncrement" json:"-"`
-	Account      int       `gorm:"not null;unique" json:"-" query:"account"`
+	Uid          int       `gorm:"primaryKey;autoIncrement" json:"uid"`
+	Account      int       `gorm:"not null;unique" json:"account" query:"account"`
 	Password     string    `gorm:"type:varchar(225);not null" json:"-" query:"password"`
 	NickName     string    `gorm:"not null" json:"nickName"`
-	CreatedAt    time.Time `gorm:"type:timestamp;comment:创建时间" json:"-"`
+	CreatedAt    time.Time `gorm:"type:timestamp;comment:创建时间" json:"createdAt"`
 	UpPassword   time.Time `gorm:"type:timestamp" json:"-"`
 	Gender       int       `gorm:"type:int" json:"gender"`
 	Birthday     string    `gorm:"type:varchar(255);null" json:"birthday"`

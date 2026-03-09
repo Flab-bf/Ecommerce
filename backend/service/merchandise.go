@@ -1,8 +1,8 @@
 package service
 
 import (
-	"ecommerce/dao"
-	"ecommerce/model"
+	"ecommerce/backend/dao"
+	"ecommerce/backend/model"
 )
 
 func ProductList() ([]model.Product, error) {

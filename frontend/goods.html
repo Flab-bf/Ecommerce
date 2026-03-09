@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            ul{list-style: none;}
+        }
+        img{
+            max-width: 100%;
+            height: auto;
+        }
+        .header{
+            height: 36px;
+            background-color: rgb(238, 246, 248);
+            position: relative;
+        }
+        .wode{
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid grey;
+            text-align: center;
+            position: absolute;
+            right: 30px;
+            top: auto;
+        }
+        .delu{
+            width: 60px;
+            height: 32px;
+            text-align: center;
+            margin-right: 30px;
+            font-size: 10px;
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+
+        }
+        .wode2{
+            width: 60px;
+            height: 32px;
+            text-align: center;
+            margin-right: 30px;
+            font-size: 10px;
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+
+        }
+        a{
+            color: rgb(49, 54, 57);
+            text-decoration: none;
+        }
+        .nav{
+            height: auto;
+            background-color: rgb(238, 246, 248);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            gap: 10px;
+        }
+        .commenteidt{
+            width: 350px;
+            border-radius: 20px;
+            height: 60px;
+            border: 1px solid red;
+            font-size: 14px;
+            resize: none;
+            box-sizing: border-box;
+            padding: 10px;
+
+        }
+        #btn{
+            width: 80px;
+            height: 40px;
+            border-top-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover{
+            background-color: #d70d24;
+        }
+        button:active{
+            background-color: #e5e7eb;
+            transform: scale(0.90);
+        }
+
+        .decoration{
+            width: 300px;
+            background-color: aqua;
+            height: 400px;
+            border-radius: 30px;
+            margin: 20px;
+
+
+        }
+        .body1{
+            display: flex;
+            align-items: center;
+        }
+        .cardjm{
+            flex: 1;
+            background-color: rgb(159, 224, 194);
+            height: 400px;
+            border-radius: 30px;
+            margin: 20px;
+            justify-content: center;
+            display: flex;
+        }
+        .lunbotu{
+            width: 600px;
+            height: 300px;
+            background-color: #1d9eb2;
+            margin-top: 20px;
+            border-radius: 30px;
+            text-align: center;
+            position: relative;
+
+
+        }
+        .dots{
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translate(-50%);
+        }
+        .next{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            right: 20px;
+            border: 3px solid grey;
+            text-align: center;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+        }
+        .prev{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 20px;
+            text-align: center;
+            background-color: grey;
+            border: 3px solid grey;
+            color: white;
+            cursor: pointer;
+        }
+        .dots li{
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: aliceblue;
+        }
+        .dots li.active{
+            background-color: red;
+        }
+        .cardin{
+            height: 50px;
+            background-color: #0dd4d7;
+            text-align: center;
+            font-size: 30px;
+            font-weight: bolder;
+            color: antiquewhite;
+            line-height: 50px;
+
+        }
+        hr{
+            border: none;
+            height: 2px;
+            background-color: rgb(31, 212, 164);
+        }
+        .card{
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .comment-header{
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .avatar{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .user-info{
+            flex: 1;
+        }
+        .nickname{
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .comment-time{
+            font-size: 12px;
+            color: #999;
+        }
+        .comment-content{
+            margin-bottom: 10px;
+        }
+        .comment-actions{
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        .reply-list{
+            margin-left: 50px;
+            margin-top: 10px;
+        }
+        .reply-item{
+            background-color: #e8f0fe;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        .detailf{
+            height: 800px;
+            background-color: #0dd4d7;
+        }
+        .detail{
+            height: 600px;
+            background-color: #d70d24;
+            display: flex;
+        }
+        .spimg{
+            width: 1000px;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+        }
+        .spjs{
+            flex: 1;
+            text-align: center;
+            background-color: #1d9eb2;
+            position: relative;
+        }
+        .spimg img{
+            width: 60%;
+            height: auto;
+
+        }
+        .spjs button{
+            margin-top: auto;
+            bottom: 30px;
+            position: absolute;
+            transform: translateX(40%);
+            background-color: #d79e0d;
+            font-size: large;
+            color: #666;
+            border-radius: 8px;
+            height: 50px;
+            border: 3px solid #666 ;
+            cursor: pointer;
+        }
+        .spjs button:active{
+            background-color: #e5e7eb;
+            transform: translateX(40%) scale(0.90);
+        }
+        .spjs .text{
+            margin-top: 20px;
+        }
+        #price{
+            margin-top: auto;
+            bottom: 30px;
+            position: absolute;
+            transform: translateX(-100%);
+            background-color: #d79e0d;
+            font-size: large;
+            color: #666;
+            border-radius: 8px;
+            height: 50px;
+            border: 3px solid #666 ;
+        }
+
+        /* 新增：匿名复选框样式 */
+        .anonymous-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+            margin-left: 10px;
+        }
+
+        /* 新增：回复输入框样式 */
+        .reply-input-container {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .reply-content {
+            width: 100%;
+            height: 60px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            resize: none;
+            font-size: 14px;
+        }
+
+        .reply-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .reply-btn-submit {
+            padding: 4px 12px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .reply-btn-cancel {
+            padding: 4px 12px;
+            background-color: #ccc;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <span class="delu" id="login-link"><a href="login.html">去登录</a></span>
+    <span class="wode"><a href="mine.html" target="_self"><img src="./素材/wode.png" alt=""></a></span>
+    <span class="wode2"><a href="mine.html">我的</a></span>
+</div>
+
+<div class="body1">
+    <div class="decoration"></div>
+    <div class="cardjm">
+        <div class="lunbotu">
+            <img src="./素材/tianqi.png" >
+            <button class="prev">&lt;</button>
+            <button class="next">&gt;</button>
+            <ul class="dots">
+                <li class="active"></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<hr>
+<div class="cardin">欢迎大家在本网站上交流</div><br>
+<div class="detailf">
+    <div class="detail">
+        <div class="spimg"><img src="./素材/tupian.png" alt=""></div>
+        <div class="spjs">
+            <div class="text">
+                <h1 id="name">商品名称</h1>
+                <p id="description">商品详情</p>
+            </div>
+            <div>
+                <button id="price">商品价格</button>
+                <button id="addCart">加入购物车</button>
+            </div>
+        </div>
+    </div>
+    <!-- 评论输入区域：新增匿名复选框 -->
+    <div class="nav">
+        <textarea name="comment" id="usercomment" class="commenteidt" placeholder="请输入评论内容..."></textarea>
+        <div class="anonymous-checkbox">
+            <input type="checkbox" id="anonymous-comment">
+            <label for="anonymous-comment">匿名评论</label>
+        </div>
+        <button id="btn">发表</button>
+    </div>
+</div>
+<div id="contain"></div>
+
+<script>
+    let down=0
+    let timer1=null
+    const img=['素材/img1.png','素材/img2.png','素材/img3.png']
+    let lunbotu=document.querySelector('.lunbotu')
+    lunbotu.querySelector('img').src=img[0]
+    document.querySelectorAll('.dots li')[0].classList.add('active')
+
+    function startTimer(){
+        timer1=setInterval(()=>{
+            down++
+            down=down%img.length
+            lunbotu.querySelector('img').src=img[down]
+            document.querySelectorAll('.dots li').forEach(item=>{item.classList.remove('active')})
+            document.querySelectorAll('.dots li')[down].classList.add('active')
+        },1000)
+    }
+
+    lunbotu.addEventListener('mouseenter',function(){clearInterval(timer1)})
+    lunbotu.addEventListener('mouseleave',startTimer)
+    startTimer()
+
+    document.querySelector('.next').onclick=function(){
+        clearInterval(timer1)
+        down++
+        down=down%img.length
+        lunbotu.querySelector('img').src=img[down]
+        document.querySelectorAll('.dots li').forEach(item=>{item.classList.remove('active')})
+        document.querySelectorAll('.dots li')[down].classList.add('active')
+    }
+
+    document.querySelector('.prev').onclick=function(){
+        clearInterval(timer1)
+        down--
+        if (down < 0) {
+            down=img.length-1
+        } else {
+            down = down % img.length
+        }
+        lunbotu.querySelector('img').src=img[down]
+        document.querySelectorAll('.dots li').forEach(item=>{item.classList.remove('active')})
+        document.querySelectorAll('.dots li')[down].classList.add('active')
+    }
+
+    // 页面加载时获取评论和检查登录状态
+    window.onload = async function() {
+        checkLoginStatus();
+        getComments();
+        // 获取商品信息
+        const productinfo = await getProductInfo(productId);
+        if(!productinfo){
+            alert('获取商品失败')
+            return
+        } else {
+            // 修正：img标签的src赋值
+            document.querySelector('.spimg img').src=productinfo.imageUrl;
+            document.getElementById('price').innerText=`¥${productinfo.price}`;
+            document.getElementById('name').innerText=productinfo.name;
+            document.getElementById('description').innerText=productinfo.description;
+        }
+    };
+
+    // 检查登录状态
+    function checkLoginStatus() {
+        const token = localStorage.getItem('token');
+        const loginLink = document.getElementById('login-link');
+        if (token) {
+            // 用户已登录，隐藏登录链接
+            loginLink.style.display = 'none';
+        }
+    }
+
+    // 获取URL参数
+    function getUrlParam(paramName) {
+        const searchParams = new URLSearchParams(window.location.search);
+        return searchParams.get(paramName);
+    }
+
+    // 提取id参数并使用
+    const productId = getUrlParam('id');
+
+    // 获取评论
+    function getComments() {
+        if (!productId) return;
+
+        fetch(`http://localhost:8080/comment/${productId}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 10000) {
+                    renderComments(data.date);
+                }
+            })
+            .catch(err => console.error('获取评论失败:', err));
+    }
+
+    // 渲染评论列表
+    function renderComments(comments) {
+        const contain = document.getElementById('contain');
+        contain.innerHTML = '';
+
+        if (!comments || comments.length === 0) {
+            contain.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">暂无评论</div>';
+            return;
+        }
+
+        comments.forEach(comment => {
+            const commentElement = createCommentElement(comment);
+            contain.appendChild(commentElement);
+        });
+    }
+
+    // 创建评论元素
+    function createCommentElement(comment) {
+        const commentDiv = document.createElement('div');
+        commentDiv.classList.add('card');
+        commentDiv.dataset.commentId = comment.postId;
+
+        // 处理匿名显示：如果是匿名，昵称显示为"匿名用户"
+        const nickName = comment.nickName === 'false' ? '匿名用户' : comment.nickName;
+
+        commentDiv.innerHTML = `
+                <div class="comment-header">
+                    <img class="avatar" src="${comment.avatar || './素材/wode.png'}" alt="头像">
+                    <div class="user-info">
+                        <div class="nickname">${nickName}</div>
+                        <div class="comment-time">${formatTime(comment.publishTime)}</div>
+                    </div>
+                </div>
+                <div class="comment-content">${comment.content}</div>
+                <div class="comment-actions">
+                    <span class="reply-btn" data-post-id="${comment.postId}">回复</span>
+                </div>
+            `;
+
+        // 添加回复事件
+        const replyBtn = commentDiv.querySelector('.reply-btn');
+        replyBtn.onclick = function() {
+            handleReply(this, commentDiv);
+        };
+
+        // 渲染回复
+        if(comment.reply && comment.reply.length > 0) {
+            const replyList = document.createElement('div');
+            replyList.classList.add('reply-list');
+
+            comment.reply.forEach(reply => {
+                const replyNickName = reply.nickName === 'false' ? '匿名用户' : reply.nickName;
+                const replyItem = document.createElement('div');
+                replyItem.classList.add('reply-item');
+                replyItem.innerHTML = `
+                        <div class="comment-header">
+                            <img class="avatar" src="${reply.avatar || './素材/wode.png'}" alt="头像">
+                            <div class="user-info">
+                                <div class="nickname">${replyNickName}</div>
+                                <div class="comment-time">${formatTime(reply.publishTime)}</div>
+                            </div>
+                        </div>
+                        <div class="comment-content">${reply.content}</div>
+                    `;
+                replyList.appendChild(replyItem);
+            });
+
+            commentDiv.appendChild(replyList);
+        }
+
+        return commentDiv;
+    }
+
+    // 格式化时间（可选，优化体验）
+    function formatTime(timeStr) {
+        if (!timeStr) return '';
+        const date = new Date(timeStr);
+        return date.toLocaleString('zh-CN');
+    }
+
+    // 处理回复：替换prompt为弹窗式输入框
+    function handleReply(btn, commentDiv) {
+        const token = localStorage.getItem('token');
+        if(!token) {
+            alert('请先登录');
+            return;
+        }
+
+        // 如果已有回复框，不再创建
+        if (commentDiv.querySelector('.reply-input-container')) {
+            return;
+        }
+
+        const parentId = btn.getAttribute('data-post-id');
+
+        // 创建回复输入容器
+        const replyContainer = document.createElement('div');
+        replyContainer.className = 'reply-input-container';
+        replyContainer.innerHTML = `
+                <textarea class="reply-content" placeholder="请输入回复内容..."></textarea>
+                <div class="reply-actions">
+                    <div class="anonymous-checkbox">
+                        <input type="checkbox" id="anonymous-reply-${parentId}">
+                        <label for="anonymous-reply-${parentId}">匿名回复</label>
+                    </div>
+                    <button class="reply-btn-cancel">取消</button>
+                    <button class="reply-btn-submit">提交</button>
+                </div>
+            `;
+
+        // 添加到评论下方
+        commentDiv.appendChild(replyContainer);
+
+        // 取消按钮事件
+        replyContainer.querySelector('.reply-btn-cancel').onclick = function() {
+            commentDiv.removeChild(replyContainer);
+        };
+
+        // 提交按钮事件
+        replyContainer.querySelector('.reply-btn-submit').onclick = function() {
+            const replyContent = replyContainer.querySelector('.reply-content').value.trim();
+            if(!replyContent) {
+                alert('回复内容不能为空');
+                return;
+            }
+
+            // 获取是否匿名
+            const isAnonymous = replyContainer.querySelector(`#anonymous-reply-${parentId}`).checked;
+
+            // 调用回复接口（与评论统一路由）
+            fetch(`http://localhost:8080/comment/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token
+                },
+                body: JSON.stringify({
+                    productId: parseInt(productId),
+                    content: replyContent,
+                    parentId: parseInt(parentId), // 回复时parentId为评论ID
+                    nickName: isAnonymous ? 'false' : 'true' // 匿名则为false
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 10000) {
+                        alert('回复成功');
+                        commentDiv.removeChild(replyContainer);
+                        getComments(); // 重新加载评论
+                    } else {
+                        alert(data.info || '回复失败');
+                    }
+                })
+                .catch(err => {
+                    console.error('回复失败:', err);
+                    alert('回复失败');
+                });
+        };
+
+        // 自动聚焦回复框
+        replyContainer.querySelector('.reply-content').focus();
+    }
+
+    // 发表评论
+    document.getElementById('btn').onclick = addcomment;
+
+    function addcomment() {
+        const commentContent = document.getElementById('usercomment').value.trim();
+        if(!commentContent) {
+            alert('评论不能为空');
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        if(!token) {
+            alert('请先登录');
+            return;
+        }
+
+        // 获取是否匿名
+        const isAnonymous = document.getElementById('anonymous-comment').checked;
+
+        // 发送评论请求（统一路由，评论时parentId=0）
+        fetch(`http://localhost:8080/comment/${productId}`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({
+                productId: parseInt(productId),
+                content: commentContent,
+                parentId: 0, // 评论时父ID为0
+                nickName: isAnonymous ? 'false' : 'true' // 匿名则为false
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 10000) {
+                    alert('评论发表成功');
+                    // 清空输入框和复选框
+                    document.getElementById('usercomment').value = '';
+                    document.getElementById('anonymous-comment').checked = false;
+                    document.getElementById('usercomment').focus();
+                    getComments(); // 重新加载评论
+                } else {
+                    alert(data.info || '评论发表失败');
+                }
+            })
+            .catch(err => {
+                console.error('发表评论失败:', err);
+                alert('发表评论失败');
+            });
+    }
+
+    // 加入购物车
+    document.getElementById('addCart').onclick = addToCart;
+
+    function addToCart() {
+        const token = localStorage.getItem('token');
+        if(!token) {
+            alert('请先登录');
+            return;
+        }
+
+        // 构建表单数据
+        const formData = new URLSearchParams();
+        formData.append('product_id', productId);
+
+        // 发送加入购物车请求
+        fetch('http://localhost:8080/product/addCart', {
+            method: 'PUT',
+            headers: {
+                'Authorization': token
+            },
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 10000) {
+                    alert('加入购物车成功');
+                } else {
+                    alert(data.info || '加入购物车失败');
+                }
+            })
+            .catch(err => {
+                console.error('加入购物车失败:', err);
+                alert('加入购物车失败');
+            });
+    }
+
+    // 获取商品信息
+    async function getProductInfo(productId) {
+        // 1. 校验商品ID
+        if (!productId) {
+            console.error('商品ID不能为空');
+            return null;
+        }
+
+        try {
+            // 2. 调用后端接口获取商品信息
+            const response = await fetch(`http://localhost:8080/product/info/${productId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': localStorage.getItem('token') || '',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // 3. 处理HTTP层面的错误
+            if (!response.ok) {
+                throw new Error(`请求失败：${response.status}`);
+            }
+
+            // 4. 解析返回的JSON数据
+            const data = await response.json();
+
+            // 5. 业务状态码校验
+            if (data.status === 10000) {
+                // 返回商品信息
+                return {
+                    price: data.date.price,
+                    imageUrl: data.date.cover,
+                    name: data.date.name,
+                    description: data.date.description
+                };
+            } else {
+                alert(data.info || '获取商品信息失败');
+                return null;
+            }
+        } catch (err) {
+            // 友好的错误提示
+            let errorMsg = '网络异常，获取商品信息失败';
+            if (err.message.includes('401')) {
+                errorMsg = '登录已过期，请重新登录';
+            } else if (err.message) {
+                errorMsg = err.message;
+            }
+            alert(errorMsg);
+            console.error('获取商品信息失败：', err);
+            return null;
+        }
+    }
+</script>
+</body>
+</html>
