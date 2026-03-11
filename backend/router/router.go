@@ -5,6 +5,8 @@ import (
 	"ecommerce/backend/middleWares"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/cors"
+	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -22,6 +24,10 @@ func NewRouter() *server.Hertz {
 		AllowCredentials: true,           // 允许前端携带cookie/token
 		MaxAge:           12 * time.Hour, // 预检请求缓存，减少OPTIONS请求
 	}))
+
+	rootDir, _ := os.Getwd()
+	staticDir := filepath.Join(rootDir, "../../frontend")
+	h.Static("/", staticDir)
 
 	user := h.Group("/user")
 	user.Use(middleWares.JwtAuthMiddleware())

@@ -225,6 +225,34 @@
             font-size: 14px;
             color: #666;
         }
+        /* 点赞按钮样式（空心/实心心形切换） */
+        .praise-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #999; /* 未点赞时文字/图标灰色 */
+        }
+        /* 未点赞的空心心形 */
+        .praise-btn .heart-icon::before {
+            content: "♡"; /* 空心心形符号 */
+            font-size: 16px;
+        }
+        /* 点赞后的实心红色心形 */
+        .praise-btn.active {
+            color: red; /* 点赞后文字变红 */
+        }
+        .praise-btn.active .heart-icon::before {
+            content: "♥"; /* 实心心形符号 */
+            font-size: 16px;
+        }
+        /* 鼠标悬浮效果 */
+        .praise-btn:hover {
+            color: #ff4444; /* 悬浮时浅红 */
+        }
+        .praise-btn:hover .heart-icon::before {
+            content: "♥"; /* 悬浮时先显示实心 */
+        }
         .reply-list{
             margin-left: 50px;
             margin-top: 10px;
@@ -234,6 +262,14 @@
             border-radius: 8px;
             padding: 10px;
             margin-bottom: 5px;
+        }
+        /* 回复评论的操作区样式 */
+        .reply-actions {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
         }
         .detailf{
             height: 800px;
@@ -325,7 +361,7 @@
             font-size: 14px;
         }
 
-        .reply-actions {
+        .reply-input-actions {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -446,9 +482,16 @@
         document.querySelectorAll('.dots li')[down].classList.add('active')
     }
 
-    // 页面加载时获取评论和检查登录状态
+    // 页面加载时先检查登录状态，未登录直接跳转
     window.onload = async function() {
-        checkLoginStatus();
+        // 优先检查登录状态
+        if (!checkLoginStatus()) {
+            alert('您尚未登录，请先登录！');
+            window.location.href = 'login.html';
+            return; // 终止后续代码执行
+        }
+
+        // 已登录则继续加载商品和评论
         getComments();
         // 获取商品信息
         const productinfo = await getProductInfo(productId);
@@ -464,14 +507,17 @@
         }
     };
 
-    // 检查登录状态
+    // 检查登录状态（返回布尔值）
     function checkLoginStatus() {
         const token = localStorage.getItem('token');
         const loginLink = document.getElementById('login-link');
         if (token) {
             // 用户已登录，隐藏登录链接
             loginLink.style.display = 'none';
+            return true;
         }
+        // 未登录
+        return false;
     }
 
     // 获取URL参数
@@ -487,7 +533,7 @@
     function getComments() {
         if (!productId) return;
 
-        fetch(`http://localhost:8080/comment/${productId}`)
+        fetch(`http://10.41.189.139:8080/comment/${productId}`)
             .then(res => res.json())
             .then(data => {
                 if(data.status === 10000) {
@@ -513,7 +559,7 @@
         });
     }
 
-    // 创建评论元素
+    // 创建主评论元素（图标改为心形）
     function createCommentElement(comment) {
         const commentDiv = document.createElement('div');
         commentDiv.classList.add('card');
@@ -521,6 +567,10 @@
 
         // 处理匿名显示：如果是匿名，昵称显示为"匿名用户"
         const nickName = comment.nickName === 'false' ? '匿名用户' : comment.nickName;
+
+        // 初始化点赞数和点赞状态
+        const praiseCount = comment.praiseCount || 0;
+        const isPraise = comment.isPraise || false;
 
         commentDiv.innerHTML = `
                 <div class="comment-header">
@@ -533,6 +583,11 @@
                 <div class="comment-content">${comment.content}</div>
                 <div class="comment-actions">
                     <span class="reply-btn" data-post-id="${comment.postId}">回复</span>
+                    <!-- 点赞按钮改为心形 -->
+                    <span class="praise-btn ${isPraise ? 'active' : ''}" data-comment-id="${comment.postId}">
+                        <span class="heart-icon"></span>
+                        <span class="praise-count">${praiseCount}</span>
+                    </span>
                 </div>
             `;
 
@@ -542,25 +597,19 @@
             handleReply(this, commentDiv);
         };
 
+        // 添加点赞事件
+        const praiseBtn = commentDiv.querySelector('.praise-btn');
+        praiseBtn.onclick = function() {
+            handlePraise(this);
+        };
+
         // 渲染回复
         if(comment.reply && comment.reply.length > 0) {
             const replyList = document.createElement('div');
             replyList.classList.add('reply-list');
 
             comment.reply.forEach(reply => {
-                const replyNickName = reply.nickName === 'false' ? '匿名用户' : reply.nickName;
-                const replyItem = document.createElement('div');
-                replyItem.classList.add('reply-item');
-                replyItem.innerHTML = `
-                        <div class="comment-header">
-                            <img class="avatar" src="${reply.avatar || './素材/wode.png'}" alt="头像">
-                            <div class="user-info">
-                                <div class="nickname">${replyNickName}</div>
-                                <div class="comment-time">${formatTime(reply.publishTime)}</div>
-                            </div>
-                        </div>
-                        <div class="comment-content">${reply.content}</div>
-                    `;
+                const replyItem = createReplyElement(reply);
                 replyList.appendChild(replyItem);
             });
 
@@ -568,6 +617,95 @@
         }
 
         return commentDiv;
+    }
+
+    // 新增：创建回复评论元素（包含心形点赞功能）
+    function createReplyElement(reply) {
+        const replyNickName = reply.nickName === 'false' ? '匿名用户' : reply.nickName;
+        // 初始化回复的点赞数和点赞状态
+        const praiseCount = reply.praiseCount || 0;
+        const isPraise = reply.isPraise || false;
+
+        const replyItem = document.createElement('div');
+        replyItem.classList.add('reply-item');
+        replyItem.dataset.replyId = reply.postId; // 绑定回复ID
+
+        replyItem.innerHTML = `
+            <div class="comment-header">
+                <img class="avatar" src="${reply.avatar || './素材/wode.png'}" alt="头像">
+                <div class="user-info">
+                    <div class="nickname">${replyNickName}</div>
+                    <div class="comment-time">${formatTime(reply.publishTime)}</div>
+                </div>
+            </div>
+            <div class="comment-content">${reply.content}</div>
+            <!-- 回复的点赞按钮（心形） -->
+            <div class="reply-actions">
+                <span class="praise-btn ${isPraise ? 'active' : ''}" data-comment-id="${reply.postId}">
+                    <span class="heart-icon"></span>
+                    <span class="praise-count">${praiseCount}</span>
+                </span>
+            </div>
+        `;
+
+        // 为回复的点赞按钮绑定点击事件
+        const praiseBtn = replyItem.querySelector('.praise-btn');
+        praiseBtn.onclick = function() {
+            handlePraise(this);
+        };
+
+        return replyItem;
+    }
+
+    // 点赞/取消点赞核心函数（通用，支持主评论和回复评论）
+    function handlePraise(praiseBtn) {
+        // 1. 登录校验
+        const token = localStorage.getItem('token');
+        if(!token) {
+            alert('请先登录后再点赞！');
+            return;
+        }
+
+        // 2. 获取评论/回复ID和当前点赞状态
+        const commentId = praiseBtn.getAttribute('data-comment-id');
+        const isActive = praiseBtn.classList.contains('active');
+        const praiseCountEl = praiseBtn.querySelector('.praise-count');
+        const currentCount = parseInt(praiseCountEl.textContent) || 0;
+
+        // 3. 构建接口参数（model=1点赞，model=-1取消点赞）
+        const formData = new FormData();
+        formData.append('model', isActive ? -1 : 1);
+        formData.append('comment_id', commentId);
+
+        // 4. 调用点赞接口
+        fetch('http://10.41.189.139:8080/comment/praise', {
+            method: 'POST',
+            headers: {
+                'Authorization': token // 携带登录令牌
+            },
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 10000) {
+                    // 5. 更新UI状态
+                    if(isActive) {
+                        // 取消点赞：移除active样式，点赞数-1
+                        praiseBtn.classList.remove('active');
+                        praiseCountEl.textContent = currentCount - 1;
+                    } else {
+                        // 点赞：添加active样式，点赞数+1
+                        praiseBtn.classList.add('active');
+                        praiseCountEl.textContent = currentCount + 1;
+                    }
+                } else {
+                    alert(data.info || '操作失败，请重试');
+                }
+            })
+            .catch(err => {
+                console.error('点赞接口调用失败:', err);
+                alert('网络异常，操作失败');
+            });
     }
 
     // 格式化时间（可选，优化体验）
@@ -597,7 +735,7 @@
         replyContainer.className = 'reply-input-container';
         replyContainer.innerHTML = `
                 <textarea class="reply-content" placeholder="请输入回复内容..."></textarea>
-                <div class="reply-actions">
+                <div class="reply-input-actions">
                     <div class="anonymous-checkbox">
                         <input type="checkbox" id="anonymous-reply-${parentId}">
                         <label for="anonymous-reply-${parentId}">匿名回复</label>
@@ -627,7 +765,7 @@
             const isAnonymous = replyContainer.querySelector(`#anonymous-reply-${parentId}`).checked;
 
             // 调用回复接口（与评论统一路由）
-            fetch(`http://localhost:8080/comment/${productId}`, {
+            fetch(`http://10.41.189.139:8080/comment/${productId}`, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
@@ -680,7 +818,7 @@
         const isAnonymous = document.getElementById('anonymous-comment').checked;
 
         // 发送评论请求（统一路由，评论时parentId=0）
-        fetch(`http://localhost:8080/comment/${productId}`, {
+        fetch(`http://10.41.189.139:8080/comment/${productId}`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -727,7 +865,7 @@
         formData.append('product_id', productId);
 
         // 发送加入购物车请求
-        fetch('http://localhost:8080/product/addCart', {
+        fetch('http://10.41.189.139:8080/product/addCart', {
             method: 'PUT',
             headers: {
                 'Authorization': token
@@ -758,7 +896,7 @@
 
         try {
             // 2. 调用后端接口获取商品信息
-            const response = await fetch(`http://localhost:8080/product/info/${productId}`, {
+            const response = await fetch(`http://10.41.189.139:8080/product/info/${productId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': localStorage.getItem('token') || '',

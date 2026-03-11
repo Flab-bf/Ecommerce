@@ -116,7 +116,7 @@
                 alert('两次密码不一致')
                 return
             }
-            fetch('http://localhost:8080/user/register',{
+            fetch('http://10.41.189.139:8080/user/register',{
                 method:'POST',
                 headers:{'content-type':'application/json'},
                 body:JSON.stringify({

@@ -135,6 +135,11 @@ func Praise(pid int64, ipd int, uid int) error {
 		if result.Error != nil || rsut.Error != nil {
 			return errors.New("error update")
 		}
+	} else {
+		rsut := DB.Model(&model2.Comment{}).Where("post_id=?", prs.PostId).Update("praise_count", gorm.Expr("praise_count-?", 1))
+		if result.Error != nil || rsut.Error != nil {
+			return errors.New("error update")
+		}
 	}
 	return nil
 }

@@ -1,86 +1,264 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Ecommerce</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园电商平台 - 首页</title>
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<!--    加载页面-->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-spinner"></div>
-        <div>加载资源中...</div>
+<!-- 加载页面 -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div>加载资源中...</div>
+</div>
+
+<!-- 导航栏 -->
+<div class="top">
+    <!-- Logo区域 -->
+    <div class="logo-container">
+        <img src="assets/1728899126126.jpg" alt="电商平台首页" class="logo-img">
     </div>
 
-<!--导航栏-->
-    <div class="top">
-            <img src="assets/1728899126126.jpg" alt="首页" width="5%" height="auto" class="class">
-            <div class="class" >
-                <a href="https://www.baidu.com" target="_blank">aaa</a>
-            </div>
-            <div class="class">
-                <a href="https://www.baidu.com" TARGET="_self">bbb</a>
-            </div>
-            <div class="class">
-                <a href="https://www.baidu.com" target="_blank">ccc</a>
-            </div>
-            <div class="class">
-                <a href="https://www.baidu.com" target="_blank">ddd</a>
-            </div>
-            <!-- 中间搜索栏 -->
-            <div class="search-box">
-                <input type="search" placeholder="请输入搜索内容...">
-            </div>
-
-            <div class="userlr">
-                <a href="login.html" id="userLink">登录/注册</a>
-            </div>
+    <!-- 核心导航菜单 -->
+    <div class="main-nav">
+        <a href="index.html" class="nav-item active">首页</a>
+        <a href="category.html" class="nav-item">商品分类</a>
+        <a href="hot-sale.html" class="nav-item">热销商品</a>
+        <a href="new-arrival.html" class="nav-item">新品上市</a>
+        <a href="promotion.html" class="nav-item">优惠活动</a>
+        <a href="about.html" class="nav-item">关于我们</a>
     </div>
 
-<!--主页-->
+    <!-- 搜索栏 -->
+    <div class="search-box">
+        <input type="search" placeholder="请输入商品名称/关键词..." class="search-input">
+        <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+
+    <!-- 右侧功能区 -->
+    <div class="nav-functions">
+        <div class="nav-function-item">
+            <a href="login.html" id="userLink"><i class="fa-solid fa-user"></i> 登录/注册</a>
+        </div>
+        <div class="nav-function-item">
+            <a href="carts.html" target="_self"><i class="fa-solid fa-shopping-cart"></i> 购物车</a>
+        </div>
+        <div class="nav-function-item">
+            <a href="order.html"><i class="fa-solid fa-list"></i> 我的订单</a>
+        </div>
+    </div>
+</div>
+
+<!-- 主页 -->
 <div class="main-container">
-    <!--    左-->
+    <!-- 左 -->
     <div class="left">
-        <P>左</P>
+        <div class="category-nav">
+            <h3 class="category-title">商品分类</h3>
+            <ul class="category-list">
+                <li class="category-item">
+                    <a href="category.html?type=electronics"><i class="fa-solid fa-mobile-screen-button"></i> 数码电子</a>
+                    <div class="sub-category">
+                        <a href="category.html?type=phone">手机</a>
+                        <a href="category.html?type=computer">电脑</a>
+                        <a href="category.html?type=headset">耳机</a>
+                    </div>
+                </li>
+                <li class="category-item">
+                    <a href="category.html?type=clothing"><i class="fa-solid fa-shirt"></i> 服饰鞋包</a>
+                    <div class="sub-category">
+                        <a href="category.html?type=top">上衣</a>
+                        <a href="category.html?type=pants">裤子</a>
+                        <a href="category.html?type=shoes">鞋子</a>
+                    </div>
+                </li>
+                <li class="category-item">
+                    <a href="category.html?type=home"><i class="fa-solid fa-house"></i> 家居用品</a>
+                    <div class="sub-category">
+                        <a href="category.html?type=bed">床上用品</a>
+                        <a href="category.html?type=kitchen">厨房用品</a>
+                    </div>
+                </li>
+                <li class="category-item">
+                    <a href="category.html?type=food"><i class="fa-solid fa-apple-whole"></i> 食品生鲜</a>
+                    <div class="sub-category">
+                        <a href="category.html?type=snack">零食</a>
+                        <a href="category.html?type=fruit">水果</a>
+                    </div>
+                </li>
+                <li class="category-item">
+                    <a href="category.html?type=stationery"><i class="fa-solid fa-pen"></i> 学习文具</a>
+                    <div class="sub-category">
+                        <a href="category.html?type=book">教辅书籍</a>
+                        <a href="category.html?type=pen">笔类</a>
+                        <a href="category.html?type=notebook">笔记本</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <!-- 中 -->
     <div class="central">
         <div class="carousel">
-            <div class="carousel-slides" id="carousel-slides"></div>
+            <div class="carousel-slides" id="carousel-slides">
+                <!-- 轮播图示例 -->
+                <div class="carousel-slide">
+                    <img src="https://picsum.photos/800/400?random=1" alt="轮播图1" class="slide-img">
+                </div>
+                <div class="carousel-slide">
+                    <img src="https://picsum.photos/800/400?random=2" alt="轮播图2" class="slide-img">
+                </div>
+                <div class="carousel-slide">
+                    <img src="https://picsum.photos/800/400?random=3" alt="轮播图3" class="slide-img">
+                </div>
+            </div>
             <button class="carousel-btn prev-btn" id="prev-btn">◀</button>
             <button class="carousel-btn next-btn" id="next-btn">▶</button>
-            <div class="carousel-indicators" id="carousel-indicators"></div>
+            <div class="carousel-indicators" id="carousel-indicators">
+                <div class="indicator active" data-index="0"></div>
+                <div class="indicator" data-index="1"></div>
+                <div class="indicator" data-index="2"></div>
+            </div>
         </div>
     </div>
 
-    <!--    右-->
+    <!-- 右 -->
     <div class="right">
-        <P>右</P>
+        <div class="sidebar-module">
+            <h3 class="sidebar-title"><i class="fa-solid fa-fire"></i> 热门推荐</h3>
+            <ul class="hot-recommend-list">
+                <li class="hot-item">
+                    <a href="product.html?id=1">
+                        <img src="https://picsum.photos/60/60?random=10" alt="热门商品1" class="hot-item-img">
+                        <div class="hot-item-info">
+                            <p class="hot-item-name">爆款无线耳机</p>
+                            <p class="hot-item-price">¥99</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="hot-item">
+                    <a href="product.html?id=2">
+                        <img src="https://picsum.photos/60/60?random=11" alt="热门商品2" class="hot-item-img">
+                        <div class="hot-item-info">
+                            <p class="hot-item-name">夏季纯棉T恤</p>
+                            <p class="hot-item-price">¥59</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="hot-item">
+                    <a href="product.html?id=3">
+                        <img src="https://picsum.photos/60/60?random=12" alt="热门商品3" class="hot-item-img">
+                        <div class="hot-item-info">
+                            <p class="hot-item-name">考研英语真题</p>
+                            <p class="hot-item-price">¥39</p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-module">
+            <h3 class="sidebar-title"><i class="fa-solid fa-bullhorn"></i> 平台公告</h3>
+            <div class="notice-list">
+                <a href="notice.html?id=1" class="notice-item">618大促活动即将开启，全场8折起！</a>
+                <a href="notice.html?id=2" class="notice-item">新用户注册立减20元优惠券已上线</a>
+                <a href="notice.html?id=3" class="notice-item">包邮政策调整：满59元全国包邮</a>
+            </div>
+        </div>
+
+        <div class="sidebar-module">
+            <h3 class="sidebar-title"><i class="fa-solid fa-star"></i> 快捷入口</h3>
+            <div class="shortcut-links">
+                <a href="collect.html" class="shortcut-link"><i class="fa-solid fa-heart"></i> 我的收藏</a>
+                <a href="feedback.html" class="shortcut-link"><i class="fa-solid fa-comment"></i> 意见反馈</a>
+                <a href="faq.html" class="shortcut-link"><i class="fa-solid fa-question-circle"></i> 常见问题</a>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- 商品列表 -->
 <div class="shops" id="productList">
-    <div style="width: 100%; text-align: center;">正在加载商品...</div>
+    <!-- 商品示例 -->
+    <div class="shop">
+        <div class="tu-pian">
+            <img src="https://picsum.photos/200/150?random=20" alt="商品1">
+        </div>
+        <div class="wen-zi">
+            <p>无线蓝牙鼠标</p>
+            <p>¥49.9</p>
+        </div>
+    </div>
+    <div class="shop">
+        <div class="tu-pian">
+            <img src="https://picsum.photos/200/150?random=21" alt="商品2">
+        </div>
+        <div class="wen-zi">
+            <p>机械键盘</p>
+            <p>¥199</p>
+        </div>
+    </div>
+    <div class="shop">
+        <div class="tu-pian">
+            <img src="https://picsum.photos/200/150?random=22" alt="商品3">
+        </div>
+        <div class="wen-zi">
+            <p>纯棉短袖</p>
+            <p>¥69</p>
+        </div>
+    </div>
+    <div class="shop">
+        <div class="tu-pian">
+            <img src="https://picsum.photos/200/150?random=23" alt="商品4">
+        </div>
+        <div class="wen-zi">
+            <p>保温杯</p>
+            <p>¥89</p>
+        </div>
+    </div>
+    <div class="shop">
+        <div class="tu-pian">
+            <img src="https://picsum.photos/200/150?random=24" alt="商品5">
+        </div>
+        <div class="wen-zi">
+            <p>笔记本</p>
+            <p>¥19.9</p>
+        </div>
+    </div>
+    <div class="shop">
+        <div class="tu-pian">
+            <img src="https://picsum.photos/200/150?random=25" alt="商品6">
+        </div>
+        <div class="wen-zi">
+            <p>蓝牙耳机</p>
+            <p>¥89</p>
+        </div>
+    </div>
 </div>
 
 <!-- 客服悬浮按钮 -->
 <div class="customer-service-btn">
     <button class="service-button">
-        <!-- 方案1：使用字体图标（推荐） -->
         <i class="fa-solid fa-headset service-icon"></i>
-
-        <!-- 方案2：纯文字替代（无图标库时使用） -->
-<!--         <span class="service-icon">客服</span>-->
     </button>
     <span class="tooltip-text">需要客服帮助吗？</span>
 </div>
 
+<!-- 页脚 -->
 <footer>
     <hr>
-    <div class="footer-copyright">-------------------------------------------占位符-------------------------------------------</div>
-    <div class="footer-copyright">------占位符------</div>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="about.html">关于我们</a>
+            <a href="contact.html">联系我们</a>
+            <a href="privacy.html">隐私政策</a>
+            <a href="terms.html">用户协议</a>
+        </div>
+        <div class="footer-copyright">© 2026 校园电商平台 版权所有</div>
+    </div>
 </footer>
 
 <script src="js/index.js"></script>
