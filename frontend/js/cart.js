@@ -62,10 +62,11 @@ function renderCartList(cartItems) {
     cartItems.forEach(item => {
         const itemTotal = item.price * item.num;
         totalPrice += itemTotal;
-
+        const imageUrl = `..${item.link}`;
+        console.log("aaaa",imageUrl);
         const itemHtml = `
             <div class="cart-item" data-product-id="${item.productId}">
-                <img src="${item.cover || 'https://via.placeholder.com/80'}" alt="${item.name}" class="cart-item-img">
+                <img src="${imageUrl}" alt="${item.name}" class="cart-item-img">
                 <div class="cart-item-info">
                     <div class="cart-item-name">${item.name}</div>
                     <div class="cart-item-type">类型：${item.type}</div>
