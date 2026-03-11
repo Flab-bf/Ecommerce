@@ -6,6 +6,7 @@ import (
 	"ecommerce/backend/service"
 	"ecommerce/backend/utils"
 	"github.com/cloudwego/hertz/pkg/app"
+	"log"
 	"strconv"
 )
 
@@ -55,6 +56,7 @@ func CartInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	date, err := service.GetCarts(userId)
+	log.Println(date, err)
 	if err != nil {
 		c.JSON(500, utils.ErrorResponse(30003, "获取失败"))
 		return

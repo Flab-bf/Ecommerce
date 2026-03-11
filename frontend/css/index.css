@@ -546,3 +546,48 @@ footer {
     color: #999;
     font-size: 14px;
 }
+
+/* 商品列表容器 - 新增控制样式 */
+.shops {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 20px;
+    justify-content: flex-start;
+    max-width: 1400px;
+    margin: 0 auto;
+    /* 新增溢出隐藏 */
+    overflow: hidden;
+    position: relative;
+}
+
+/* 商品列表高度控制容器 */
+.shops-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 查看更多按钮样式 */
+.load-more-btn {
+    display: block;
+    width: 180px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    background-color: #6610f2;
+    color: white;
+    border-radius: 22px;
+    margin: 20px auto 40px;
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+.load-more-btn:hover {
+    background-color: #550ed1;
+    box-shadow: 0 4px 12px rgba(102, 16, 242, 0.2);
+}
+.load-more-btn.hidden {
+    display: none;
+}

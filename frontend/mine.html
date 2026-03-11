@@ -1,164 +1,414 @@
 <!DOCTYPE html>
-<html lang="zh-CN"> <!-- 改为中文更适配 -->
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的界面</title>
     <style>
+        /* 全局样式重置与基础配置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        body {
-            background-color: #f5f5f5;
-            font-family: Arial, sans-serif;
+
+        :root {
+            --primary-color: #0088ff;
+            --primary-light: #e8f4ff;
+            --success-color: #00cc00;
+            --error-color: #ff4444;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-placeholder: #999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-light: #e5e7eb;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --radius-full: 50%;
+            --transition-base: all 0.3s ease;
         }
+
+        body {
+            background-color: var(--bg-main);
+            font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* 顶部导航栏 */
         .header {
-            height: 36px;
-            background-color: rgb(238, 246, 248);
-            position: relative;
+            height: 48px;
+            background-color: var(--bg-card);
+            position: sticky;
+            top: 0;
+            z-index: 100;
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding-right: 20px;
+            padding: 0 24px;
+            box-shadow: var(--shadow-sm);
         }
+
         .header a {
-            color: rgb(49, 54, 57);
+            color: var(--text-secondary);
             text-decoration: none;
-            margin-left: 20px;
-        }
-        .header a:hover {
-            color: #0088ff; /* 新增：hover样式提升体验 */
-        }
-        .user-info {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .user-header {
-            margin-bottom: 20px;
-        }
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            object-fit: cover; /* 新增：防止头像变形 */
-            border: 1px solid #eee;
-        }
-        .account-info {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .user-detail {
+            margin-left: 28px;
             font-size: 14px;
-            color: #666;
-            line-height: 1.8;
-            text-align: left;
-            padding: 0 20px;
+            transition: var(--transition-base);
+            position: relative;
         }
+
+        .header a:hover {
+            color: var(--primary-color);
+        }
+
+        .header a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition-base);
+        }
+
+        .header a:hover::after {
+            width: 100%;
+        }
+
+        /* 提示消息框 */
         #msg {
-            color: #333;
-            background-color: #fff;
+            max-width: 600px;
+            margin: 16px auto;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
             text-align: center;
-            padding: 10px;
-            margin: 10px 20px;
-            border-radius: 4px;
+            font-size: 14px;
             display: none;
-            border: 1px solid #eee;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: var(--transition-base);
         }
+
+        #msg.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .msg-success {
+            color: var(--success-color);
+            border: 1px solid #ccffcc;
+            background-color: #f8fff8;
+        }
+
         .msg-error {
-            color: #ff4444;
-            border-color: #ffcccc;
+            color: var(--error-color);
+            border: 1px solid #ffcccc;
             background-color: #fff8f8;
         }
-        .msg-success {
-            color: #00cc00;
-            border-color: #ccffcc;
-            background-color: #f8fff8;
+
+        /* 用户信息卡片 */
+        .user-info {
+            max-width: 720px;
+            margin: 24px auto;
+            padding: 32px;
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-base);
+        }
+
+        .user-info:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* 核心修改：调整用户头部布局，让头像在最上方 */
+        .user-header {
+            display: flex;
+            flex-direction: column; /* 改为纵向排列，头像在上 */
+            align-items: center;    /* 所有内容水平居中 */
+            gap: 16px;             /* 调整元素间距 */
+            margin-bottom: 28px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;    /* 文本居中 */
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 3px solid var(--primary-light);
+            transition: var(--transition-base);
+            cursor: pointer;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(0, 136, 255, 0.2);
+        }
+
+        .account-info {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .user-detail {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            width: 100%; /* 占满父容器宽度 */
+        }
+
+        .user-detail-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .user-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-detail-label {
+            display: inline-block;
+            width: 70px;
+            color: var(--text-secondary);
+        }
+
+        .user-detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 性别样式优化 */
+        .gender-text {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #fff;
+            background-color: #999;
+        }
+
+        .gender-male {
+            background-color: #0088ff;
+        }
+
+        .gender-female {
+            background-color: #ff69b4;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .header {
+                height: 44px;
+                padding: 0 16px;
+            }
+
+            .header a {
+                margin-left: 16px;
+                font-size: 13px;
+            }
+
+            .user-info {
+                margin: 16px;
+                padding: 20px;
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .account-info {
+                font-size: 20px;
+            }
+
+            .user-detail {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .user-detail-label {
+                width: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header a {
+                margin-left: 12px;
+                font-size: 12px;
+            }
+
+            .user-info {
+                padding: 16px;
+            }
+
+            .avatar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .user-detail-label {
+                display: block;
+                width: 100%;
+                margin-bottom: 4px;
+            }
         }
     </style>
 </head>
 <body>
 <div id="msg"></div>
 <div class="header">
-    <!-- 修正：返回首页指向index.html（原评论区.html） -->
     <a href="index.html">返回首页</a>
     <a href="change_password.html">修改密码</a>
     <a href="#" id="logout">退出登录</a>
+    <a href="edit_profile.html">编辑资料</a> <!-- 新增编辑资料入口 -->
 </div>
 <div class="user-info">
     <div class="user-header">
-        <img class="avatar" src="./素材/wode.png" alt="头像" id="avatar">
-        <div class="account-info" id="account">加载中...</div>
-        <div class="user-detail" id="userDetail">
-            <p>用户ID：<span id="userId">--</span></p>
-            <p>昵称：<span id="nickName">--</span></p>
-            <p>注册时间：<span id="registerTime">--</span></p>
+        <!-- 头像现在在最上方 -->
+        <img class="avatar" src="assets/wode.png" alt="头像" id="avatar">
+        <div>
+            <div class="account-info" id="account">加载中...</div>
+            <div class="user-detail">
+                <div class="user-detail-item">
+                    <span class="user-detail-label">用户ID：</span>
+                    <span class="user-detail-value" id="userId">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">账号：</span>
+                    <span class="user-detail-value" id="userAccount">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">昵称：</span>
+                    <span class="user-detail-value" id="nickName">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">性别：</span>
+                    <span class="user-detail-value" id="gender">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">生日：</span>
+                    <span class="user-detail-value" id="birthday">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">注册时间：</span>
+                    <span class="user-detail-value" id="registerTime">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">邮箱：</span>
+                    <span class="user-detail-value" id="email">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">简介：</span>
+                    <span class="user-detail-value" id="introduction">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">QQ：</span>
+                    <span class="user-detail-value" id="qq">--</span>
+                </div>
+                <div class="user-detail-item">
+                    <span class="user-detail-label">手机号：</span>
+                    <span class="user-detail-value" id="tel">--</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 优化提示函数：区分成功/错误样式
+    // 优化提示函数：增加过渡动画
     function showmsg(text, isSuccess = true) {
         const msg = document.getElementById('msg');
         msg.innerHTML = text;
-        msg.style.display = 'block';
         // 切换样式类
         msg.className = isSuccess ? 'msg-success' : 'msg-error';
+        // 触发过渡动画
+        msg.classList.add('show');
+
         setTimeout(() => {
-            msg.style.display = 'none';
+            msg.classList.remove('show');
+            // 等待动画结束后隐藏
+            setTimeout(() => {
+                msg.className = '';
+                msg.style.display = 'none';
+            }, 300);
         }, 2000);
+    }
+
+    // 性别转换函数
+    function getGenderText(gender) {
+        switch (gender) {
+            case 1:
+                return '<span class="gender-text gender-male">男</span>';
+            case 2:
+                return '<span class="gender-text gender-female">女</span>';
+            default:
+                return '未设置';
+        }
+    }
+
+    // 格式化时间函数
+    function formatTime(timeStr) {
+        if (!timeStr) return '--';
+        try {
+            const date = new Date(timeStr);
+            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        } catch (e) {
+            return timeStr;
+        }
     }
 
     // 页面加载时执行
     window.onload = function() {
-        checkLogin(); // 先检查登录态，再拉取用户信息
+        checkLogin();
     };
 
     /**
-     * 检查登录状态（核心：读取localStorage的token和userId）
+     * 检查登录状态
      */
     function checkLogin() {
         const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId'); // 从本地读取真实userId，不再硬编码
+        const userId = localStorage.getItem('userId');
 
-        // 双重校验：token和userId都必须存在
         if (!token || !userId || userId === 'undefined') {
             showmsg('请先登录', false);
             setTimeout(() => location.href = 'login.html', 2000);
             return;
         }
 
-        // 登录态有效，拉取该用户的信息
         getUserInfo(userId, token);
     }
 
     /**
-     * 获取用户信息（适配不同用户：传入真实userId和token）
+     * 获取用户信息
      * @param {string/number} userId - 本地存储的用户ID
      * @param {string} token - 本地存储的token
      */
     function getUserInfo(userId, token) {
-        // 完整接口地址（补充域名+端口，和主页保持一致）
         const apiUrl = `http://10.41.189.139:8080/user/info/${userId}`;
 
         fetch(apiUrl, {
             method: 'GET',
             headers: {
-                // 修正：Authorization头必须带Bearer前缀（和主页一致）
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
             .then(res => {
-                // 先校验HTTP状态码（非200直接抛错）
                 if (!res.ok) {
                     throw new Error(`接口请求失败：${res.status}(${res.statusText})`);
                 }
@@ -166,9 +416,9 @@
             })
             .then(data => {
                 if (data.status === 10000) {
-                    // 后端返回结构：data.date.date 是用户信息
                     const userInfo = data.date?.date || {};
-                    renderUserInfo(userInfo, userId); // 渲染用户信息
+                    console.log(userInfo);
+                    renderUserInfo(userInfo, userId);
                 } else {
                     showmsg(data.info || '获取用户信息失败', false);
                 }
@@ -176,51 +426,67 @@
             .catch(err => {
                 console.error('获取用户信息失败:', err);
                 showmsg('网络错误或接口异常', false);
-                // 接口报错时清空无效登录态
                 clearLoginState();
                 setTimeout(() => location.href = 'login.html', 2000);
             });
     }
 
     /**
-     * 渲染用户信息到页面（适配不同字段）
+     * 渲染用户信息到页面
      * @param {object} userInfo - 后端返回的用户信息
      * @param {string/number} userId - 用户ID
      */
     function renderUserInfo(userInfo, userId) {
-        console.log(userInfo);
-        // 渲染用户ID
-        document.getElementById('userId').textContent = userId;
-        // 渲染账号/昵称
-        const accountText = userInfo.nickName ? `昵称：${userInfo.nickName}` : '默认昵称'+userInfo.uid;
-        document.getElementById('account').textContent = accountText;
-        // 渲染昵称（备用）
-        document.getElementById('nickName').textContent = userInfo.nickName || '--';
-        // 渲染注册时间（如果后端返回）
-        document.getElementById('registerTime').textContent = userInfo.createdAt || '--';
+        console.log('用户信息:', userInfo);
 
-        // 渲染头像（优先用接口返回的，无则用默认）
+        // 基础信息
+        document.getElementById('userId').textContent = userId || '--';
+        document.getElementById('userAccount').textContent = userInfo.account || '--';
+
+        // 昵称和账号显示
+        const accountText = userInfo.nickName ? `昵称：${userInfo.nickName}` : '默认昵称';
+        document.getElementById('account').textContent = accountText;
+        document.getElementById('nickName').textContent = userInfo.nickName || '--';
+
+        // 性别（格式化显示）
+        document.getElementById('gender').innerHTML = getGenderText(userInfo.gender);
+
+        // 生日
+        document.getElementById('birthday').textContent = userInfo.birthday || '--';
+
+        // 注册时间（格式化）
+        document.getElementById('registerTime').textContent = formatTime(userInfo.createdAt);
+
+        // 联系方式和简介
+        document.getElementById('email').textContent = userInfo.email || '--';
+        document.getElementById('introduction').textContent = userInfo.introduction || '暂无简介';
+        document.getElementById('qq').textContent = userInfo.qq || '--';
+        document.getElementById('tel').textContent = userInfo.tel || '--';
+
+        // 头像
         if (userInfo.avatar && userInfo.avatar !== '{:url}') {
             document.getElementById('avatar').src = userInfo.avatar;
         }
     }
 
     /**
-     * 清空登录状态（统一封装）
+     * 清空登录状态
      */
     function clearLoginState() {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userId'); // 新增：清空userId
+        localStorage.removeItem('userId');
     }
 
-    // 退出登录功能（优化）
+    // 退出登录功能
     document.getElementById('logout').onclick = function(e) {
         e.preventDefault();
-        clearLoginState(); // 调用统一的清空函数
+        clearLoginState();
         showmsg('已成功退出登录');
         setTimeout(() => location.href = 'login.html', 2000);
     };
 </script>
 </body>
 </html>
+
+

@@ -104,52 +104,187 @@ function jumpToProductDetail(productId, baseUrl = "goods.html") {
     window.open(targetUrl);
 }
 
-// ===================== 4. 商品列表渲染 =====================
-document.addEventListener('DOMContentLoaded', async function() {
-    // 优先初始化用户信息（保证导航栏先加载）
-    await initUserInfo();
-
-    const productList = document.getElementById('productList');
+// ===================== 新增：右侧热门推荐商品渲染 =====================
+/**
+ * 从后端获取热门推荐商品（3个）
+ */
+async function getHotRecommendFromDB() {
     try {
-        const response = await fetch('http://10.41.189.139:8080/product/list');
-        if (!response.ok) throw new Error(`HTTP错误，状态码：${response.status}`);
+        // 请求商品列表接口（可替换为专门的热门商品接口）
+        const response = await fetch('http://10.41.189.139:8080/product/list', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`接口请求失败：${response.status}`);
+        }
 
         const result = await response.json();
-        if (result.status !== 10000) {
-            throw new Error(`接口返回失败：${result.info || '未知错误'}`);
+        // 校验接口返回格式
+        if (result.status !== 10000 || !Array.isArray(result.date)) {
+            throw new Error('接口返回数据格式异常');
         }
 
-        const products = result.date || [];
-        productList.innerHTML = '';
+        const allProducts = result.date;
+        // 随机筛选3个商品作为热门推荐（也可根据销量/热度排序）
+        const hotProducts = allProducts.length <= 3
+            ? allProducts
+            : allProducts.sort(() => Math.random() - 0.5).slice(0, 3);
 
-        if (products.length === 0) {
-            productList.innerHTML = "<div style='width: 100%; text-align: center;'>暂无商品</div>";
-            return;
-        }
+        // 格式化数据结构
+        return hotProducts.map(product => ({
+            productId: product.productId || product.id || 0,
+            imgSrc: product.link || product.imageUrl || 'https://picsum.photos/60/60?random=100',
+            name: product.name || '未命名商品',
+            price: product.price || '0.00'
+        }));
 
-        products.forEach(product => {
-            const linkUrl = product.link || "#";
-            const productName = product.name || "未命名商品";
-            const productId = product.productId || 0;
-
-            const shopItem = document.createElement('div');
-            shopItem.className = 'shop';
-            shopItem.style.cursor = 'pointer';
-            shopItem.onclick = () => jumpToProductDetail(productId);
-
-            shopItem.innerHTML = `
-                <div class="tu-pian">
-                    <img src="${linkUrl}" alt="${productName}">
-                </div>
-                <div class="wen-zi">${productName}</div>
-            `;
-
-            productList.appendChild(shopItem);
-        });
-    } catch (error) {
-        productList.innerHTML = `<div style='width: 100%; text-align: center; color: red;'>加载商品失败：${error.message}</div>`;
-        console.error("商品列表加载失败：", error);
+    } catch (err) {
+        console.error('获取热门推荐数据失败:', err);
+        // 异常兜底：返回3个默认商品
+        return [
+            { productId: 101, imgSrc: 'https://picsum.photos/60/60?random=10', name: '爆款无线耳机', price: '¥99' },
+            { productId: 102, imgSrc: 'https://picsum.photos/60/60?random=11', name: '夏季纯棉T恤', price: '¥59' },
+            { productId: 103, imgSrc: 'https://picsum.photos/60/60?random=12', name: '考研英语真题', price: '¥39' }
+        ];
     }
+}
+
+/**
+ * 渲染右侧热门推荐列表
+ */
+async function renderHotRecommend() {
+    const hotRecommendList = document.querySelector('.hot-recommend-list');
+    if (!hotRecommendList) return;
+
+    // 清空原有静态内容
+    hotRecommendList.innerHTML = '';
+
+    // 获取热门商品数据
+    const hotProducts = await getHotRecommendFromDB();
+
+    // 渲染每个热门商品项
+    hotProducts.forEach(product => {
+        const hotItem = document.createElement('li');
+        hotItem.className = 'hot-item';
+
+        const link = document.createElement('a');
+        link.href = 'javascript:void(0)';
+        link.onclick = () => jumpToProductDetail(product.productId);
+
+        link.innerHTML = `
+            <img src="${product.imgSrc}" alt="${product.name}" class="hot-item-img" onerror="this.src='https://picsum.photos/60/60?random=200'">
+            <div class="hot-item-info">
+                <p class="hot-item-name">${product.name}</p>
+                <p class="hot-item-price">¥${product.price}</p>
+            </div>
+        `;
+
+        hotItem.appendChild(link);
+        hotRecommendList.appendChild(hotItem);
+    });
+}
+
+// ===================== 4. 商品列表渲染 =====================
+// ===================== 7. 商品列表加载更多逻辑 =====================
+document.addEventListener('DOMContentLoaded', function() {
+    const productList = document.getElementById('productList');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const itemsPerRow = 5; // 每行商品数量
+    const defaultRows = 2; // 默认展示行数
+    const defaultShowCount = defaultRows * itemsPerRow; // 默认展示数量
+
+    // 初始化商品列表高度（2行）
+    productList.style.maxHeight = `${(200 + 30) * defaultRows}px`; // 200px商品高度 + 30px间距
+
+    // 加载更多按钮点击事件
+    loadMoreBtn.addEventListener('click', function() {
+        // 展示全部商品（移除高度限制）
+        productList.style.maxHeight = 'none';
+        // 隐藏加载更多按钮
+        loadMoreBtn.classList.add('hidden');
+    });
+
+    // 监听商品列表渲染完成后判断是否需要显示加载更多按钮
+    function checkLoadMoreButton(products) {
+        if (products.length > defaultShowCount) {
+            loadMoreBtn.classList.remove('hidden');
+        } else {
+            loadMoreBtn.classList.add('hidden');
+            productList.style.maxHeight = 'none'; // 商品不足时直接展示全部
+        }
+    }
+
+    // 重写商品列表渲染逻辑（整合原有逻辑）
+    async function renderProductList() {
+        try {
+            const response = await fetch('http://10.41.189.139:8080/product/list');
+            if (!response.ok) throw new Error(`HTTP错误，状态码：${response.status}`);
+
+            const result = await response.json();
+            if (result.status !== 10000) {
+                throw new Error(`接口返回失败：${result.info || '未知错误'}`);
+            }
+
+            let products = result.date || [];
+            function shuffleArray(array) {
+                // 先创建数组副本，避免修改原数组
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+            // 执行打乱操作
+            products = shuffleArray(products);
+            productList.innerHTML = '';
+
+            if (products.length === 0) {
+                productList.innerHTML = "<div style='width: 100%; text-align: center;'>暂无商品</div>";
+                loadMoreBtn.classList.add('hidden');
+                return;
+            }
+
+            // 渲染商品列表
+            products.forEach(product => {
+                const linkUrl = product.link || "#";
+                const productName = product.name || "未命名商品";
+                const productId = product.productId || 0;
+                console.log(linkUrl);
+                const shopItem = document.createElement('div');
+                shopItem.className = 'shop';
+                shopItem.style.cursor = 'pointer';
+                shopItem.onclick = () => jumpToProductDetail(productId);
+
+                shopItem.innerHTML = `
+                    <div class="tu-pian">
+                        <img src="${linkUrl}" alt="${productName}">
+                    </div>
+                    <div class="wen-zi">
+                        <p>${productName}</p>
+                        <p>¥${product.price || '0.00'}</p>
+                    </div>
+                `;
+
+                productList.appendChild(shopItem);
+            });
+
+            // 判断是否显示加载更多按钮
+            checkLoadMoreButton(products);
+
+        } catch (error) {
+            productList.innerHTML = `<div style='width: 100%; text-align: center; color: red;'>加载商品失败：${error.message}</div>`;
+            loadMoreBtn.classList.add('hidden');
+            console.error("商品列表加载失败：", error);
+        }
+    }
+
+    // 初始化调用商品列表渲染
+    renderProductList();
 });
 
 // ===================== 5. 轮播图逻辑 =====================
@@ -162,20 +297,45 @@ const nextBtn = document.getElementById('next-btn');
 
 async function getSlidesFromDB() {
     try {
-        await new Promise(resolve => setTimeout(resolve, 600));
-        return [
-            { productId: 1, imgSrc: "assets/1728899126126.jpg", imgAlt: "商品1", name: "商品1 - 爆款手机" },
-            { productId: 2, imgSrc: "assets/1728899126126.jpg", imgAlt: "商品2", name: "商品2 - 无线耳机" },
-            { productId: 3, imgSrc: "assets/1728899126126.jpg", imgAlt: "商品3", name: "商品3 - 智能手表" },
-            { productId: 4, imgSrc: "assets/1728899126126.jpg", imgAlt: "商品4", name: "商品4 - 平板电脑" },
-            { productId: 5, imgSrc: "assets/1728899126126.jpg", imgAlt: "商品5", name: "商品5 - 充电宝" },
-            { productId: 6, imgSrc: "assets/1728899126126.jpg", imgAlt: "商品6", name: "商品6 - 蓝牙耳机" }
-        ];
+        // 请求商品列表接口获取轮播图数据
+        const response = await fetch('http://10.41.189.139:8080/product/list', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`接口请求失败：${response.status}`);
+        }
+
+        const result = await response.json();
+        if (result.status !== 10000 || !Array.isArray(result.date)) {
+            throw new Error('接口返回数据格式异常');
+        }
+
+        const allProducts = result.date;
+        // 随机筛选6个商品作为轮播图
+        const randomSlides = allProducts.length <= 6
+            ? allProducts
+            : allProducts.sort(() => Math.random() - 0.5).slice(0, 6);
+
+        return randomSlides.map(product => ({
+            productId: product.productId || product.id || 0,
+            imgSrc: product.link || product.imageUrl || 'https://picsum.photos/800/400?random=10',
+            imgAlt: product.name || `商品${product.productId}`,
+            name: product.name || '未命名商品'
+        }));
+
     } catch (err) {
         console.error('获取轮播数据失败:', err);
-        return [
-            { productId: 0, imgSrc: "https://via.placeholder.com/800x600?text=加载失败&bgcolor=f5f5f5&color=888", imgAlt: "错误", name: "加载失败" }
-        ];
+        // 异常兜底
+        return Array.from({ length: 6 }, (_, index) => ({
+            productId: index + 1,
+            imgSrc: `https://picsum.photos/800/400?random=${index + 10}`,
+            imgAlt: `默认轮播图${index + 1}`,
+            name: `默认商品${index + 1}`
+        }));
     }
 }
 
@@ -194,7 +354,7 @@ function initCarousel(slides) {
         img.src = slide.imgSrc;
         img.alt = slide.imgAlt;
         img.onerror = function() {
-            this.src = 'https://via.placeholder.com/800x600?text=图片加载失败&bgcolor=f5f5f5&color=888';
+            this.src = `https://picsum.photos/800/400?random=${index + 20}`;
         };
 
         img.style.cursor = 'pointer';
@@ -246,6 +406,9 @@ window.onload = async () => {
     const slides = await getSlidesFromDB();
     initCarousel(slides);
     startAutoPlay();
+
+    // 初始化右侧热门推荐
+    await renderHotRecommend();
 
     // 轮播图鼠标悬停暂停/恢复自动播放
     const carousel = document.querySelector('.carousel');

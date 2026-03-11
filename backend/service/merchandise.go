@@ -3,6 +3,7 @@ package service
 import (
 	"ecommerce/backend/dao"
 	"ecommerce/backend/model"
+	"log"
 )
 
 func ProductList() ([]model.Product, error) {
@@ -15,6 +16,7 @@ func AddCart(id int, userId int) error {
 		return err
 	}
 	cart.UserId = userId
+	log.Println(cart)
 	err = dao.AddCart(cart)
 	if err != nil {
 		return err

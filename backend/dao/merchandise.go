@@ -26,7 +26,7 @@ func FindProductToCart(id int) (error, model.Cart) {
 
 func AddCart(cart model.Cart) error {
 	var num int
-	result := DB.Model(&model.Cart{}).Select("num").Where("product_id=?", cart.ProductId).First(&num)
+	result := DB.Model(&model.Cart{}).Select("num").Where("product_id=? AND user_id=?", cart.ProductId, cart.UserId).First(&num)
 	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return result.Error
 	}
@@ -35,7 +35,7 @@ func AddCart(cart model.Cart) error {
 		result = DB.Model(&model.Cart{}).Create(&cart)
 	} else {
 		cart.Num = num + 1
-		result = DB.Model(&model.Cart{}).Where("product_id=?", cart.ProductId).Update("num", cart.Num)
+		result = DB.Model(&model.Cart{}).Where("product_id=? AND user_id=?", cart.ProductId, cart.UserId).Update("num", cart.Num)
 	}
 	if result.Error != nil {
 		return result.Error

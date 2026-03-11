@@ -34,32 +34,6 @@ async function fetchCartData() {
     }
 }
 
-// 2. 加入购物车（调用 /product/addCart 接口）
-async function addToCart(productId) {
-    try {
-        const formData = new FormData();
-        formData.append('product_id', productId);
-
-        const res = await fetch('http://10.41.189.139:8080/product/addCart', {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            },
-            body: formData
-        });
-        const result = await res.json();
-
-        if (result.status === 10000) {
-            alert('加入购物车成功！');
-            fetchCartData(); // 加入成功后刷新购物车列表
-        } else {
-            alert('加入购物车失败：' + result.info);
-        }
-    } catch (err) {
-        console.error('加入购物车失败:', err);
-        alert('加入购物车失败，请重试');
-    }
-}
 
 // 3. 渲染购物车列表
 function renderCartList(cartItems) {
@@ -67,7 +41,7 @@ function renderCartList(cartItems) {
     if (!Array.isArray(cartItems)) {
         cartItems = [];
     }
-
+    console.log(cartItems);
     const cartListEl = document.getElementById('cart-list');
     cartListEl.innerHTML = '';
 

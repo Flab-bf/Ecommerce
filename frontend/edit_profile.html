@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编辑个人资料</title>
+  <style>
+    /* 复用全局样式变量，保持风格统一 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #0088ff;
+      --primary-light: #e8f4ff;
+      --success-color: #00cc00;
+      --error-color: #ff4444;
+      --text-primary: #333;
+      --text-secondary: #666;
+      --text-placeholder: #999;
+      --bg-main: #f5f7fa;
+      --bg-card: #ffffff;
+      --border-light: #e5e7eb;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+      --radius-full: 50%;
+      --transition-base: all 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    /* 顶部导航栏（复用mine.html样式） */
+    .header {
+      height: 48px;
+      background-color: var(--bg-card);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-left: 28px;
+      font-size: 14px;
+      transition: var(--transition-base);
+      position: relative;
+    }
+
+    .header a:hover {
+      color: var(--primary-color);
+    }
+
+    .header a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary-color);
+      transition: var(--transition-base);
+    }
+
+    .header a:hover::after {
+      width: 100%;
+    }
+
+    /* 提示消息框（复用mine.html样式） */
+    #msg {
+      max-width: 600px;
+      margin: 16px auto;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      font-size: 14px;
+      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: var(--transition-base);
+    }
+
+    #msg.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .msg-success {
+      color: var(--success-color);
+      border: 1px solid #ccffcc;
+      background-color: #f8fff8;
+    }
+
+    .msg-error {
+      color: var(--error-color);
+      border: 1px solid #ffcccc;
+      background-color: #fff8f8;
+    }
+
+    /* 编辑表单卡片 */
+    .edit-form-card {
+      max-width: 720px;
+      margin: 24px auto;
+      padding: 32px;
+      background-color: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      transition: var(--transition-base);
+    }
+
+    .edit-form-card:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .form-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      text-align: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    /* 表单布局 */
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .form-control {
+      padding: 10px 12px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: var(--transition-base);
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0, 136, 255, 0.1);
+    }
+
+    .form-control::placeholder {
+      color: var(--text-placeholder);
+    }
+
+    /* 日期选择器样式适配 */
+    input[type="date"] {
+      padding: 10px 12px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: var(--transition-base);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="date"]:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0, 136, 255, 0.1);
+    }
+
+    /* 头像预览区域 */
+    .avatar-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .avatar-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 2px solid var(--primary-light);
+    }
+
+    .avatar-tips {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* 性别单选框样式 */
+    .gender-group {
+      display: flex;
+      gap: 24px;
+      padding: 8px 0;
+    }
+
+    .gender-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gender-item input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary-color);
+    }
+
+    /* 按钮样式 */
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 32px;
+    }
+
+    .btn {
+      padding: 10px 32px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-base);
+      border: none;
+      outline: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0077dd;
+      box-shadow: 0 2px 8px rgba(0, 136, 255, 0.2);
+    }
+
+    .btn-default {
+      background-color: var(--bg-main);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+    }
+
+    .btn-default:hover {
+      background-color: #eee;
+      color: var(--text-primary);
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .header {
+        height: 44px;
+        padding: 0 16px;
+      }
+
+      .header a {
+        margin-left: 16px;
+        font-size: 13px;
+      }
+
+      .edit-form-card {
+        margin: 16px;
+        padding: 20px;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      input[type="date"] {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header a {
+        margin-left: 12px;
+        font-size: 12px;
+      }
+
+      .edit-form-card {
+        padding: 16px;
+      }
+
+      .avatar-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      input[type="date"] {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="msg"></div>
+<div class="header">
+  <a href="mine.html">返回我的页面</a>
+  <a href="index.html">首页</a>
+  <a href="change_password.html">修改密码</a>
+  <a href="#" id="logout">退出登录</a>
+</div>
+
+<div class="edit-form-card">
+  <div class="form-title">编辑个人资料</div>
+
+  <!-- 头像区域 -->
+  <div class="avatar-group">
+    <img class="avatar-preview" src="assets/wode.png" alt="头像预览" id="avatarPreview">
+    <div>
+      <div class="form-label">头像地址</div>
+      <input type="text" class="form-control" id="avatar" placeholder="请输入头像图片URL">
+      <div class="avatar-tips">提示：输入有效的图片URL即可更换头像</div>
+    </div>
+  </div>
+
+  <!-- 表单内容 -->
+  <div class="form-group">
+    <label class="form-label">昵称</label>
+    <input type="text" class="form-control" id="nickName" placeholder="请输入昵称">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">性别</label>
+    <div class="gender-group">
+      <div class="gender-item">
+        <input type="radio" name="gender" id="gender1" value="1">
+        <label for="gender1">男</label>
+      </div>
+      <div class="gender-item">
+        <input type="radio" name="gender" id="gender2" value="2">
+        <label for="gender2">女</label>
+      </div>
+      <div class="gender-item">
+        <input type="radio" name="gender" id="gender0" value="0" checked>
+        <label for="gender0">未设置</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">生日</label>
+    <!-- 核心修改：type改为date，支持日期选择 -->
+    <input type="date" class="form-control" id="birthday" placeholder="请选择生日">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">邮箱</label>
+    <input type="email" class="form-control" id="email" placeholder="请输入邮箱">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">个人简介</label>
+    <input type="text" class="form-control" id="introduction" placeholder="请输入个人简介">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">QQ号</label>
+    <input type="text" class="form-control" id="qq" placeholder="请输入QQ号">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">手机号</label>
+    <input type="tel" class="form-control" id="tel" placeholder="请输入手机号">
+  </div>
+
+  <!-- 按钮组 -->
+  <div class="btn-group">
+    <button type="button" class="btn btn-default" id="btnReset">重置</button>
+    <button type="button" class="btn btn-primary" id="btnSubmit">保存修改</button>
+  </div>
+</div>
+
+<script>
+  // 提示消息函数（复用mine.html逻辑）
+  function showmsg(text, isSuccess = true) {
+    const msg = document.getElementById('msg');
+    msg.innerHTML = text;
+    msg.className = isSuccess ? 'msg-success' : 'msg-error';
+    msg.classList.add('show');
+
+    setTimeout(() => {
+      msg.classList.remove('show');
+      setTimeout(() => {
+        msg.className = '';
+        msg.style.display = 'none';
+      }, 300);
+    }, 2000);
+  }
+
+  // 清空登录状态函数（复用）
+  function clearLoginState() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
+  }
+
+  // 退出登录功能
+  document.getElementById('logout').onclick = function(e) {
+    e.preventDefault();
+    clearLoginState();
+    showmsg('已成功退出登录');
+    setTimeout(() => location.href = 'login.html', 2000);
+  };
+
+  // 页面加载时检查登录并获取用户信息
+  window.onload = function() {
+    checkLogin();
+  };
+
+  /**
+   * 检查登录状态
+   */
+  function checkLogin() {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    if (!token || !userId || userId === 'undefined') {
+      showmsg('请先登录', false);
+      setTimeout(() => location.href = 'login.html', 2000);
+      return;
+    }
+
+    // 获取用户信息并填充表单
+    getUserInfo(userId, token);
+  }
+
+  /**
+   * 获取用户信息并填充表单
+   * @param {string/number} userId 用户ID
+   * @param {string} token 登录令牌
+   */
+  function getUserInfo(userId, token) {
+    const apiUrl = `http://10.41.189.139:8080/user/info/${userId}`;
+
+    fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+            .then(res => {
+              if (!res.ok) throw new Error(`请求失败：${res.status}`);
+              return res.json();
+            })
+            .then(data => {
+              if (data.status === 10000) {
+                const userInfo = data.date?.date || {};
+                fillForm(userInfo);
+              } else {
+                showmsg(data.info || '获取用户信息失败', false);
+              }
+            })
+            .catch(err => {
+              console.error('获取信息失败:', err);
+              showmsg('网络错误，无法加载用户信息', false);
+            });
+  }
+
+  /**
+   * 填充表单数据
+   * @param {object} userInfo 用户信息对象
+   */
+  function fillForm(userInfo) {
+    // 填充基础信息
+    document.getElementById('nickName').value = userInfo.NickName || '';
+
+    // 处理生日格式，适配date输入框（仅支持YYYY-MM-DD）
+    let birthdayValue = '';
+    if (userInfo.Birthday) {
+      // 兼容 / 和 - 分隔的日期格式
+      birthdayValue = userInfo.Birthday.replace(/\//g, '-');
+      // 确保格式是10位的YYYY-MM-DD
+      if (birthdayValue.length === 10) {
+        document.getElementById('birthday').value = birthdayValue;
+      }
+    }
+
+    document.getElementById('email').value = userInfo.Email || '';
+    document.getElementById('introduction').value = userInfo.Introduction || '';
+    document.getElementById('qq').value = userInfo.QQ || '';
+    document.getElementById('tel').value = userInfo.Tel || '';
+
+    // 填充头像
+    if (userInfo.Avatar && userInfo.Avatar !== '{:url}') {
+      document.getElementById('avatar').value = userInfo.Avatar;
+      document.getElementById('avatarPreview').src = userInfo.Avatar;
+    }
+
+    // 填充性别
+    const gender = userInfo.Gender || 0;
+    document.getElementById(`gender${gender}`).checked = true;
+  }
+
+  // 重置按钮事件
+  document.getElementById('btnReset').onclick = function() {
+    if (confirm('确定要重置表单吗？已填写的内容将被清空')) {
+      const formElements = document.querySelectorAll('.form-control');
+      formElements.forEach(el => el.value = '');
+      document.getElementById('gender0').checked = true;
+      document.getElementById('avatarPreview').src = 'assets/wode.png';
+    }
+  };
+
+  // 提交按钮事件
+  document.getElementById('btnSubmit').onclick = function() {
+    submitForm();
+  };
+
+  /**
+   * 提交修改后的用户信息
+   */
+  function submitForm() {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    if (!token || !userId) {
+      showmsg('登录状态失效，请重新登录', false);
+      setTimeout(() => location.href = 'login.html', 2000);
+      return;
+    }
+
+    // 收集表单数据
+    const userData = {
+      nickName: document.getElementById('nickName').value.trim(),
+      gender: parseInt(document.querySelector('input[name="gender"]:checked').value),
+      birthday: document.getElementById('birthday').value.trim(),
+      avatar: document.getElementById('avatar').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      introduction: document.getElementById('introduction').value.trim(),
+      qq: document.getElementById('qq').value.trim(),
+      tel: document.getElementById('tel').value.trim()
+    };
+
+    // 发送PUT请求修改信息
+    const apiUrl = 'http://10.41.189.139:8080/user/info';
+    fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+            .then(res => {
+              if (!res.ok) throw new Error(`请求失败：${res.status}`);
+              return res.json();
+            })
+            .then(data => {
+              if (data.status === 10000) {
+                showmsg('修改信息成功！即将返回个人中心', true);
+                setTimeout(() => location.href = 'mine.html', 2000);
+              } else {
+                showmsg(data.info || '修改失败，请稍后重试', false);
+              }
+            })
+            .catch(err => {
+              console.error('修改信息失败:', err);
+              showmsg('网络错误，修改失败', false);
+            });
+  }
+</script>
+</body>
+</html>

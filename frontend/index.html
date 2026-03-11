@@ -18,7 +18,7 @@
 <div class="top">
     <!-- Logo区域 -->
     <div class="logo-container">
-        <img src="assets/1728899126126.jpg" alt="电商平台首页" class="logo-img">
+        <img src="assets/top_logo.png" alt="电商平台首页" class="logo-img">
     </div>
 
     <!-- 核心导航菜单 -->
@@ -180,65 +180,67 @@
     </div>
 </div>
 
-<!-- 商品列表 -->
-<div class="shops" id="productList">
-    <!-- 商品示例 -->
-    <div class="shop">
-        <div class="tu-pian">
-            <img src="https://picsum.photos/200/150?random=20" alt="商品1">
+<div class="shops-wrapper">
+    <div class="shops" id="productList" style="max-height: calc((200px + 30px) * 2);">
+        <!-- 商品示例 -->
+        <div class="shop">
+            <div class="tu-pian">
+                <img src="https://picsum.photos/200/150?random=20" alt="商品1">
+            </div>
+            <div class="wen-zi">
+                <p>无线蓝牙鼠标</p>
+                <p>¥49.9</p>
+            </div>
         </div>
-        <div class="wen-zi">
-            <p>无线蓝牙鼠标</p>
-            <p>¥49.9</p>
+        <div class="shop">
+            <div class="tu-pian">
+                <img src="https://picsum.photos/200/150?random=21" alt="商品2">
+            </div>
+            <div class="wen-zi">
+                <p>机械键盘</p>
+                <p>¥199</p>
+            </div>
+        </div>
+        <div class="shop">
+            <div class="tu-pian">
+                <img src="https://picsum.photos/200/150?random=22" alt="商品3">
+            </div>
+            <div class="wen-zi">
+                <p>纯棉短袖</p>
+                <p>¥69</p>
+            </div>
+        </div>
+        <div class="shop">
+            <div class="tu-pian">
+                <img src="https://picsum.photos/200/150?random=23" alt="商品4">
+            </div>
+            <div class="wen-zi">
+                <p>保温杯</p>
+                <p>¥89</p>
+            </div>
+        </div>
+        <div class="shop">
+            <div class="tu-pian">
+                <img src="https://picsum.photos/200/150?random=24" alt="商品5">
+            </div>
+            <div class="wen-zi">
+                <p>笔记本</p>
+                <p>¥19.9</p>
+            </div>
+        </div>
+        <div class="shop">
+            <div class="tu-pian">
+                <img src="https://picsum.photos/200/150?random=25" alt="商品6">
+            </div>
+            <div class="wen-zi">
+                <p>蓝牙耳机</p>
+                <p>¥89</p>
+            </div>
         </div>
     </div>
-    <div class="shop">
-        <div class="tu-pian">
-            <img src="https://picsum.photos/200/150?random=21" alt="商品2">
-        </div>
-        <div class="wen-zi">
-            <p>机械键盘</p>
-            <p>¥199</p>
-        </div>
-    </div>
-    <div class="shop">
-        <div class="tu-pian">
-            <img src="https://picsum.photos/200/150?random=22" alt="商品3">
-        </div>
-        <div class="wen-zi">
-            <p>纯棉短袖</p>
-            <p>¥69</p>
-        </div>
-    </div>
-    <div class="shop">
-        <div class="tu-pian">
-            <img src="https://picsum.photos/200/150?random=23" alt="商品4">
-        </div>
-        <div class="wen-zi">
-            <p>保温杯</p>
-            <p>¥89</p>
-        </div>
-    </div>
-    <div class="shop">
-        <div class="tu-pian">
-            <img src="https://picsum.photos/200/150?random=24" alt="商品5">
-        </div>
-        <div class="wen-zi">
-            <p>笔记本</p>
-            <p>¥19.9</p>
-        </div>
-    </div>
-    <div class="shop">
-        <div class="tu-pian">
-            <img src="https://picsum.photos/200/150?random=25" alt="商品6">
-        </div>
-        <div class="wen-zi">
-            <p>蓝牙耳机</p>
-            <p>¥89</p>
-        </div>
-    </div>
+    <!-- 新增查看更多按钮 -->
+    <button class="load-more-btn" id="loadMoreBtn">查看更多</button>
 </div>
-
 <!-- 客服悬浮按钮 -->
 <div class="customer-service-btn">
     <button class="service-button">
